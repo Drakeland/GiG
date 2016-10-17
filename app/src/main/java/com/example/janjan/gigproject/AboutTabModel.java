@@ -3,7 +3,7 @@ package com.example.janjan.gigproject;
 /**
  * Created by JanJan on 10/10/2016.
  */
-public class VersionModel {
+public class AboutTabModel {
     public static final String[] data = {
             "John Felix Anthony Cena Jr. is an " +
                     "American professional wrestler, rapper, actor, and reality " +

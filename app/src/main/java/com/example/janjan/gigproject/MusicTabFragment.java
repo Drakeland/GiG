@@ -14,7 +14,7 @@ import android.widget.TextView;
 /**
  * Created by JanJan on 10/10/2016.
  */
-public class CoordinatorFragment3 extends Fragment {
+public class MusicTabFragment extends Fragment {
     RecyclerView recyclerView;
 
     @Override
@@ -28,7 +28,7 @@ public class CoordinatorFragment3 extends Fragment {
     private void setupRecyclerView(RecyclerView recyclerView){
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(getActivity(),
-                VersionModel2.data));
+                MusicTabModel.data));
     }
 
     public static class SimpleStringRecyclerViewAdapter extends RecyclerView.Adapter<SimpleStringRecyclerViewAdapter.ViewHolder>{

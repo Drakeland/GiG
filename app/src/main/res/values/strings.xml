@@ -11,7 +11,8 @@
     <string name="about_label">About</string>
     <string name="genres_label">Genres</string>
     <string name="music_label">Music</string>
-    <string name="gig_label">GiGs</string>
+    <string name="gigs_label">GiGs</string>
+    <string name="photos_label">Photos</string>
 
     <string name="tabs">Tabs</string>
     <string name="coordinator">Coordinator Layout</string>

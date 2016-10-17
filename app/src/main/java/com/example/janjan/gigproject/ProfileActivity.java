@@ -23,10 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
-
-import com.roughike.bottombar.BottomBar;
-import com.roughike.bottombar.OnMenuTabSelectedListener;
 
 public class ProfileActivity extends AppCompatActivity {
     private CoordinatorLayout coordinatorLayout;
@@ -120,13 +116,11 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager){
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-    //    adapter.addFrag(new FloatingLabelsFragment(), "Floating Labels");
-    //    adapter.addFrag(new FABLayoutFragment(), "FAB");
-    //    adapter.addFrag(new SnackBarFragment(), "Snackbar");
-        adapter.addFrag(new CoordinatorFragment(), "About");
-        adapter.addFrag(new CoordinatorFragment2(), "Genres");
-        adapter.addFrag(new CoordinatorFragment2(), "Music");
-        adapter.addFrag(new CoordinatorFragment2(), "GiGs");
+        adapter.addFrag(new AboutTabFragment(), getString(R.string.about_label));
+        adapter.addFrag(new GenreTabFragment(), getString(R.string.genres_label));
+        adapter.addFrag(new MusicTabFragment(), getString(R.string.music_label));
+        adapter.addFrag(new GigsTabFragment(), getString(R.string.gigs_label));
+        adapter.addFrag(new PhotosTabFragment(), getString(R.string.photos_label));
         viewPager.setAdapter(adapter);
     }
 
@@ -140,21 +134,17 @@ public class ProfileActivity extends AppCompatActivity {
                     case R.id.about_label:
                         viewPager.setCurrentItem(0);
                         break;
-                    case R.id.genre_label:
+                    case R.id.genres_label:
                         viewPager.setCurrentItem(1);
                         break;
-                    /*
-                    case R.id.drawer_snackbar:
-                        viewPager.setCurrentItem(2);
-                        break;
-                    case R.id.drawer_coordinator:
-                        viewPager.setCurrentItem(3);
-                        break; */
                     case R.id.music_label:
                         viewPager.setCurrentItem(2);
                         break;
-                    case R.id.gig_label:
+                    case R.id.gigs_label:
                         viewPager.setCurrentItem(3);
+                        break;
+                    case R.id.photos_label:
+                        viewPager.setCurrentItem(4);
                         break;
                 }
 
