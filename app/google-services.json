@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1025695556309",
+    "firebase_url": "https://gig-app-feba2.firebaseio.com",
+    "project_id": "gig-app-feba2",
+    "storage_bucket": "gig-app-feba2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1025695556309:android:2820c05447f9c8b7",
+        "android_client_info": {
+          "package_name": "edu.ucsc.giggle.gig"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1025695556309-326888iu8tn7qvu3s09eiek8blmgvdds.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.ucsc.giggle.gig",
+            "certificate_hash": "B7BBC104CA76CF77E72563B540C11C1D22FB59E7"
+          }
+        },
+        {
+          "client_id": "1025695556309-467do6cjdp0mssggb6kfv8j7g2oi29gd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBD1cQoXZZQ8qLf8ERq1O0GsA-YgiUr1Ww"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1025695556309-467do6cjdp0mssggb6kfv8j7g2oi29gd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
