@@ -1,20 +1,13 @@
 <resources>
-    <string name="app_name">John Cena</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="app_name">GiG</string>
+    <string name="band_name">Band Name</string>
     <string name="settings_menu">Settings</string>
-    <string name="hello">Sample Android Design Support Library App</string>
-
-    <string name="floating_labels">Floating Labels</string>
-    <string name="fab">Floating Action Button</string>
 
     <string name="about_label">About</string>
     <string name="genres_label">Genres</string>
     <string name="music_label">Music</string>
     <string name="gigs_label">GiGs</string>
     <string name="photos_label">Photos</string>
-
-    <string name="tabs">Tabs</string>
-    <string name="coordinator">Coordinator Layout</string>
 
     <string name="sign_in">Sign In</string>
     <string name="sign_out">Sign Out</string>

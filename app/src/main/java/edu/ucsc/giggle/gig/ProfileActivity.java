@@ -26,8 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.support.design.widget.CoordinatorLayout;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.appinvite.AppInvite;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
@@ -61,7 +63,7 @@ public class ProfileActivity extends AppCompatActivity
         // Initialize Firebase Auth
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
-        Log.d(TAG, "mFirebaseUser: " + mFirebaseUser);
+
         if (mFirebaseUser == null) {
             // Not signed in, launch the Sign In activity
             startActivity(new Intent(this, SignInActivity.class));
@@ -84,6 +86,10 @@ public class ProfileActivity extends AppCompatActivity
         final ActionBar ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setDisplayHomeAsUpEnabled(true);
+        ab.setTitle(mUsername);
+
+        ImageView profile_pic = (ImageView) findViewById(R.id.profile_pic);
+        Glide.with(this).load(mPhotoUrl).into(profile_pic);
 
         drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
 
