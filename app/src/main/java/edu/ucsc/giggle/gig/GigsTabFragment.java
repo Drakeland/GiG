@@ -1,6 +1,7 @@
 package edu.ucsc.giggle.gig;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -10,16 +11,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.EditText;
 
 /**
  * Created by JanJan on 10/10/2016.
  */
+
 public class GigsTabFragment extends Fragment {
     RecyclerView recyclerView;
+    EditText edit;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View rootView = inflater.inflate(R.layout.coordinator_layout, container, false);
+        //edit = (EditText) rootView.findViewById(R.id.editText);
+        //SharedPreferences settings = this.getActivity().getSharedPreferences("PREFS", 0);
+        //edit.setText(settings.getString("value",""));
         recyclerView = (RecyclerView)rootView.findViewById(R.id.recyclerView);
         setupRecyclerView(recyclerView);
         return rootView;

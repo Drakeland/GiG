@@ -130,7 +130,7 @@ public class ProfileActivity extends AppCompatActivity
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFrag(new AboutTabFragment(), getString(R.string.about_label));
         adapter.addFrag(new GenreTabFragment(), getString(R.string.genres_label));
-        adapter.addFrag(new MusicTabFragment(), getString(R.string.music_label));
+        adapter.addFrag(new GigsTabFragment(), getString(R.string.music_label));
         adapter.addFrag(new GigsTabFragment(), getString(R.string.gigs_label));
         adapter.addFrag(new PhotosTabFragment(), getString(R.string.photos_label));
         viewPager.setAdapter(adapter);
