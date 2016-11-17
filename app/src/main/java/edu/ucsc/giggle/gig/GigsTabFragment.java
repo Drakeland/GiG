@@ -24,9 +24,9 @@ public class GigsTabFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View rootView = inflater.inflate(R.layout.coordinator_layout, container, false);
-        //edit = (EditText) rootView.findViewById(R.id.editText);
-        //SharedPreferences settings = this.getActivity().getSharedPreferences("PREFS", 0);
-        //edit.setText(settings.getString("value",""));
+        edit = (EditText) rootView.findViewById(R.id.GigsEditText);
+        SharedPreferences settings = this.getActivity().getSharedPreferences("PREFS", 0);
+        edit.setText(settings.getString("value",""));
         recyclerView = (RecyclerView)rootView.findViewById(R.id.recyclerView);
         setupRecyclerView(recyclerView);
         return rootView;
