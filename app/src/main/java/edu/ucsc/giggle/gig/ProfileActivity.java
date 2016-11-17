@@ -223,11 +223,11 @@ public class ProfileActivity extends AppCompatActivity
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                 mUsername = ANONYMOUS;
                 startActivity(new Intent(this, SignInActivity.class));
+
                 return true;
 
             case R.id.edit_profile_menu:
-                AlertDialog editProfileDialog = createEditProfileDialog();
-                editProfileDialog.show();
+                showEditProfileDialog();
 
                 return true;
 
@@ -256,7 +256,7 @@ public class ProfileActivity extends AppCompatActivity
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
 
-    public AlertDialog createEditProfileDialog() {
+    public void showEditProfileDialog() {
         LayoutInflater layoutInflater = LayoutInflater.from(this);
         final View inflater = layoutInflater.inflate(R.layout.dialog_edit_profile, null);
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -283,8 +283,7 @@ public class ProfileActivity extends AppCompatActivity
             }
         });
 
-        return alert.create();
-
+        alert.show();
     }
 }
 
