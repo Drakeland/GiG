@@ -11,4 +11,8 @@
 
     <string name="sign_in">Sign In</string>
     <string name="sign_out">Sign Out</string>
+
+    <string name="edit_profile">Edit Profile</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
 </resources>

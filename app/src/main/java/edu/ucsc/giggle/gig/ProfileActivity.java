@@ -1,7 +1,9 @@
 package edu.ucsc.giggle.gig;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -19,6 +21,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -26,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.support.design.widget.CoordinatorLayout;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -37,11 +42,14 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import static edu.ucsc.giggle.gig.R.styleable.AlertDialog;
+
 public class ProfileActivity extends AppCompatActivity
         implements GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "ProfileActivity";
     public static final String ANONYMOUS = "anonymous";
     private CoordinatorLayout coordinatorLayout;
+    private ActionBar actionBar;
     private ViewPager viewPager;
     private DrawerLayout drawerLayout;
     private String mUsername;
@@ -83,10 +91,10 @@ public class ProfileActivity extends AppCompatActivity
                 .addApi(AppInvite.API)
                 .build();
 
-        final ActionBar ab = getSupportActionBar();
-        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
-        ab.setDisplayHomeAsUpEnabled(true);
-        ab.setTitle(mUsername);
+        actionBar = getSupportActionBar();
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle(mUsername);
 
         ImageView profile_pic = (ImageView) findViewById(R.id.profile_pic);
         Glide.with(this).load(mPhotoUrl).into(profile_pic);
@@ -217,6 +225,12 @@ public class ProfileActivity extends AppCompatActivity
                 startActivity(new Intent(this, SignInActivity.class));
                 return true;
 
+            case R.id.edit_profile_menu:
+                AlertDialog editProfileDialog = createEditProfileDialog();
+                editProfileDialog.show();
+
+                return true;
+
             case R.id.action_settings:
                 return true;
 
@@ -240,6 +254,37 @@ public class ProfileActivity extends AppCompatActivity
         // be available.
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
+    }
+
+    public AlertDialog createEditProfileDialog() {
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        final View inflater = layoutInflater.inflate(R.layout.dialog_edit_profile, null);
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle(R.string.edit_profile);
+        alert.setIcon(R.drawable.ic_mode_edit_black);
+        alert.setView(inflater);
+
+        final EditText text_band_name = (EditText) inflater.findViewById(R.id.edit_band_name);
+
+        alert.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton)
+            {
+                String band_name = text_band_name.getText().toString();
+                actionBar.setTitle(band_name);
+
+                dialog.dismiss();
+            }
+        });
+
+        alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                dialog.cancel();
+            }
+        });
+
+        return alert.create();
+
     }
 }
 
