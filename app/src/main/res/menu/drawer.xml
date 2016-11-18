@@ -3,12 +3,16 @@
     <group
         android:checkableBehavior="single">
 
+<!--        <item
+            android:id="@+id/drawer_labels"
+            android:title="@string/floating_labels"/>-->
+
         <item
             android:id="@+id/about_label"
             android:title="@string/about_label"/>
 
         <item
-            android:id="@+id/genres_label"
+            android:id="@+id/genre_label"
             android:title="@string/genres_label"/>
 
         <item
@@ -16,12 +20,26 @@
             android:title="@string/music_label"/>
 
         <item
-            android:id="@+id/gigs_label"
-            android:title="@string/gigs_label"/>
-
+            android:id="@+id/gig_label"
+            android:title="@string/gig_label"/>
         <item
-            android:id="@+id/photos_label"
-            android:title="@string/photos_label"/>
+            android:id="@+id/photo_label"
+            android:title="@string/photo_label"/>
+        <item
+            android:id="@+id/media_label"
+            android:title="@string/media_label"/>
+
+<!--        <item
+            android:id="@+id/drawer_fab"
+            android:title="@string/fab"/>-->
+
+<!--        <item
+            android:id="@+id/drawer_snackbar"
+            android:title="@string/snackbar"/>-->
+
+<!--        <item
+            android:id="@+id/drawer_coordinator"
+            android:title="@string/coordinator"/>-->
 
     </group>
 

@@ -20,5 +20,4 @@
         android:textColor="@color/primary_text_default_material_light"
         android:textSize="@dimen/abc_text_size_subhead_material"/>
 
-
 </android.support.v7.widget.CardView>
