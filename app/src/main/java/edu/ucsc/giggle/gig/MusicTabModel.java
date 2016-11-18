@@ -5,7 +5,7 @@ package edu.ucsc.giggle.gig;
  */
 public class MusicTabModel {
     public static final String[] data = {
-            "Hip-Hop","Rap","Blues"
+            "MUSIC"
     };
 
 }

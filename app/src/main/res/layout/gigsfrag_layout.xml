@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/addButton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Upcoming GIG"/>
+
+    <EditText
+    android:id="@+id/todoText"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"/>
+
+    <android.support.v7.widget.ListViewCompat
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fitsSystemWindows="true"
+        android:layout_weight="1"/>
+
+    <!--<EditText-->
+        <!--android:id="@+id/todoText"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="wrap_content"/>-->
+
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        app:fabSize="normal"
+        android:src="@drawable/ic_location_on_white_24dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"/>
+
+
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="vertical"-->
+        <!--android:layout_gravity="bottom">-->
+        <!--&lt;!&ndash;<EditText&ndash;&gt;-->
+            <!--&lt;!&ndash;android:id="@+id/todoText"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_width="fill_parent"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_height="wrap_content"/>&ndash;&gt;-->
+        <!--&lt;!&ndash;<Button&ndash;&gt;-->
+            <!--&lt;!&ndash;android:id="@+id/addButton"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_width="fill_parent"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:text="Add New Item"/>&ndash;&gt;-->
+    <!--</LinearLayout>-->
+
+
+</RelativeLayout>
+    <!--<ListView-->
+        <!--android:id="@+id/listView"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_weight="1">-->
+    <!--</ListView>-->
+
+
+
+
+
+    <!--///////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+    <!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:tools="http://schemas.android.com/tools"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:paddingLeft="@dimen/activity_horizontal_margin"-->
+    <!--android:paddingRight="@dimen/activity_horizontal_margin"-->
+    <!--android:paddingTop="@dimen/activity_vertical_margin"-->
+    <!--android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".ProfileActivity"-->
+    <!--android:orientation="vertical">-->
+
+    <!--</LinearLayout>&ndash;&gt;-->
+    <!--///////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+
+
+
+    <!--<EditText-->
+        <!--android:id="@+id/GigsEditText"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="50dp"-->
+        <!--android:ems="10"-->
+        <!--android:hint="Enter Text"-->
+        <!--android:imeOptions="actionNext"-->
+        <!--android:inputType="textMultiLine"-->
+        <!--android:paddingLeft="30dp"-->
+        <!--android:paddingRight="30dp"-->
+        <!--android:textSize="10sp" />-->

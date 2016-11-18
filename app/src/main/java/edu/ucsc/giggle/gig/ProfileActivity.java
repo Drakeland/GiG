@@ -132,7 +132,7 @@ public class ProfileActivity extends AppCompatActivity
         adapter.addFrag(new GenreTabFragment(), getString(R.string.genres_label));
         adapter.addFrag(new GigsTabFragment(), getString(R.string.music_label));
         adapter.addFrag(new GigsTabFragment(), getString(R.string.gigs_label));
-        adapter.addFrag(new PhotosTabFragment(), getString(R.string.photos_label));
+        adapter.addFrag(new PhotoFragment(), getString(R.string.photos_label));
         viewPager.setAdapter(adapter);
     }
 

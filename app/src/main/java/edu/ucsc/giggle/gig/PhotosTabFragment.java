@@ -19,7 +19,7 @@ public class PhotosTabFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        View rootView = inflater.inflate(R.layout.coordinator_layout, container, false);
+        View rootView = inflater.inflate(R.layout.photosfrag_layout, container, false);
         recyclerView = (RecyclerView)rootView.findViewById(R.id.recyclerView);
         setupRecyclerView(recyclerView);
         return rootView;
