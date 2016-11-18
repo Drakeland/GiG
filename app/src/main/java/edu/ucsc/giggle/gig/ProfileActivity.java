@@ -2,6 +2,11 @@ package edu.ucsc.giggle.gig;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +32,7 @@ import android.view.MenuItem;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import android.support.design.widget.CoordinatorLayout;
 import android.view.View;
@@ -35,14 +41,18 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.appinvite.AppInvite;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import static edu.ucsc.giggle.gig.R.styleable.AlertDialog;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 public class ProfileActivity extends AppCompatActivity
         implements GoogleApiClient.OnConnectionFailedListener {
@@ -60,6 +70,9 @@ public class ProfileActivity extends AppCompatActivity
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
 
+    private User mUser;
+    Bitmap profilePic = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,29 +85,49 @@ public class ProfileActivity extends AppCompatActivity
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
+        mUser = new User();
+
         if (mFirebaseUser == null) {
             // Not signed in, launch the Sign In activity
             startActivity(new Intent(this, SignInActivity.class));
             finish();
             return;
         } else {
-            mUsername = mFirebaseUser.getDisplayName();
-            if (mFirebaseUser.getPhotoUrl() != null) {
-                mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
-            }
+            String mEmail = mFirebaseUser.getEmail();
+            mUser.setUsernameFromEmail(mEmail);
+
+            User.usersTable().child(mUser.username).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (snapshot.getValue() != null) {
+                        // user exists, retrieve from DB snapshot
+                        mUser = snapshot.getValue(User.class);
+                    } else {
+                        // user does not exist, use default bandname from Google Sign-in and add to DB
+                        mUser.bandname = mFirebaseUser.getDisplayName();
+                        mUser.update();
+                    }
+                    actionBar.setTitle(mUser.bandname);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         }
 
+
         // Initialize Google API
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .addApi(Auth.GOOGLE_SIGN_IN_API)
-                .addApi(AppInvite.API)
-                .build();
+        mGoogleApiClient = new GoogleApiClient.Builder(this).
+                enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */).
+                addApi(Auth.GOOGLE_SIGN_IN_API).
+                addApi(AppInvite.API).
+                build();
 
         actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle(mUsername);
 
         ImageView profile_pic = (ImageView) findViewById(R.id.profile_pic);
         Glide.with(this).load(mPhotoUrl).into(profile_pic);
@@ -221,7 +254,7 @@ public class ProfileActivity extends AppCompatActivity
             case R.id.sign_out_menu:
                 mFirebaseAuth.signOut();
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-                mUsername = ANONYMOUS;
+                mUser = null;
                 startActivity(new Intent(this, SignInActivity.class));
 
                 return true;
@@ -265,13 +298,15 @@ public class ProfileActivity extends AppCompatActivity
         alert.setIcon(R.drawable.ic_mode_edit_black);
         alert.setView(inflater);
 
-        final EditText text_band_name = (EditText) inflater.findViewById(R.id.edit_band_name);
+        final EditText text_bandname = (EditText) inflater.findViewById(R.id.edit_bandname);
 
         alert.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton)
             {
-                String band_name = text_band_name.getText().toString();
-                actionBar.setTitle(band_name);
+                String new_bandname = text_bandname.getText().toString();
+                actionBar.setTitle(new_bandname);
+                mUser.bandname = new_bandname;
+                mUser.update();
 
                 dialog.dismiss();
             }
@@ -285,6 +320,7 @@ public class ProfileActivity extends AppCompatActivity
 
         alert.show();
     }
+
 }
 
 

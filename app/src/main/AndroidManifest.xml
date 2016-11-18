@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name="edu.ucsc.giggle.gig.ProfileActivity"
-                  android:label="@string/band_name">
+                  android:label="GiG">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

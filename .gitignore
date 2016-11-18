@@ -1,0 +1,6 @@
+
+*.lock
+
+*.bin
+
+app/.idea/workspace.xml
