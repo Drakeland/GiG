@@ -37,6 +37,10 @@ import static edu.ucsc.giggle.gig.R.id.listView;
 
 public class GigsTabFragment extends ListFragment {
     RecyclerView recyclerView;
+    View rootView;
+    static final String TAG = "GigsTabFragment";
+   // ListView listView;
+    //ListViewCompat listView;
     //static ListView listView;
     //static View rootView;
 
@@ -44,24 +48,28 @@ public class GigsTabFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 
-        View rootView = inflater.inflate(R.layout.gigsfrag_layout, container, false);
-        // ListView listView = (ListView)rootView.findViewById(R.id.listView);
+        rootView = inflater.inflate(R.layout.gigsfrag_layout, container, false);
         recyclerView = (RecyclerView)rootView.findViewById(R.id.recyclerView);
         setupRecyclerView(recyclerView);
-        //listView = (ListView)rootView.findViewById(R.id.listView);
+
         return rootView;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onViewCreated( View view, Bundle savedInstanceState) {
+      super.onViewCreated(view, savedInstanceState);
+    //public void onCreate(  Bundle savedInstanceState) {
+      //  super.onCreate(savedInstanceState);
 //        View rootView = inflater.inflate(R.layout.coordinator_layout, container, false);
 //        recyclerView = (RecyclerView)rootView.findViewById(R.id.recyclerView);
 //        setupRecyclerView(recyclerView);
 
 //
+
+
+
         // Get ListView object from xml
-        final ListViewCompat listView = (ListViewCompat)getView().findViewById(R.id.listView);
+        final ListView listView = (ListView)rootView.findViewById(android.R.id.list);
 
         // Create a new Adapter
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
@@ -93,6 +101,7 @@ public class GigsTabFragment extends ListFragment {
             public void onChildRemoved(DataSnapshot dataSnapshot){
                 String value = dataSnapshot.getValue(String.class);
                 adapter.remove(value);
+                Log.d(TAG, "****************************************************************delete");
             }
 
             // The following functions are also required in ChildEventListener implementations.
@@ -107,8 +116,8 @@ public class GigsTabFragment extends ListFragment {
         });
 
         // Add items via the Button and EditText at the bottom of the window.
-        final EditText text = (EditText)getView().findViewById(R.id.todoText);
-        final Button button = (Button)getView().findViewById(R.id.addButton);
+        final EditText text = (EditText)rootView.findViewById(R.id.todoText);
+        final Button button = (Button)rootView.findViewById(R.id.addButton);
 
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -151,9 +160,10 @@ public class GigsTabFragment extends ListFragment {
 
 
 
+ /////////////////////////////////////////////////////////////////////////////////////////////////////
     private void setupRecyclerView(RecyclerView recyclerView){
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
-        recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(getActivity(), GigsTabModel.data));
+        //recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(getActivity(), GigsTabModel.data));
         //edit = (EditText) recyclerView.findViewById(R.id.GigsEditText);
         //SharedPreferences settings = this.getActivity().getSharedPreferences("PREFS", 0);
         //edit.setText(settings.getString("value",""));
