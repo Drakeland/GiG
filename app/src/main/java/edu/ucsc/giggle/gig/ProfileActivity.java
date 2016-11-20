@@ -55,8 +55,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -89,6 +92,9 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
     private ProgressDialog progressDialog;
     private DatabaseReference mDatabase;
 
+    private User mUser;
+    Bitmap profilePic = null;
+
 
     static final int REQUEST_ACCOUNT_PICKER = 1000;
     static final int REQUEST_AUTHORIZATION = 1001;
@@ -101,7 +107,7 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        Toolbar toolbar = (Toolbar)findViewById(R.id.mToolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.mToolbar);
         setSupportActionBar(toolbar);
         Log.v("this", "This works");
 
@@ -111,6 +117,8 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
 
         mStorage = FirebaseStorage.getInstance().getReference();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("profile_page");
+
+        mUser = new User();
 
         // Initialize Firebase Auth
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -122,18 +130,35 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
             finish();
             return;
         } else {
-            mUsername = mFirebaseUser.getDisplayName();
-            if (mFirebaseUser.getPhotoUrl() != null) {
-                mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
-            }
-        }
+            String mEmail = mFirebaseUser.getEmail();
+            mUser.setUsernameFromEmail(mEmail);
 
-        // Initialize Google API
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .addApi(Auth.GOOGLE_SIGN_IN_API)
-                .addApi(AppInvite.API)
-                .build();
+            User.usersTable().child(mUser.username).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (snapshot.getValue() != null) {
+                        // user exists, retrieve from DB snapshot
+                        mUser = snapshot.getValue(User.class);
+                    } else {
+                        // user does not exist, use default bandname from Google Sign-in and add to DB
+                        mUser.bandname = mFirebaseUser.getDisplayName();
+                        mUser.update();
+                    }
+                    actionBar.setTitle(mUser.bandname);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+            // Initialize Google API
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                    .addApi(Auth.GOOGLE_SIGN_IN_API)
+                    .addApi(AppInvite.API)
+                    .build();
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -160,62 +185,62 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
             }
         });*/
 
-        // Set the color for the active tab. Ignored on mobile when there are more than three tabs.
-        //bottomBar.setActiveTabColor("#33dbff");
+            // Set the color for the active tab. Ignored on mobile when there are more than three tabs.
+            //bottomBar.setActiveTabColor("#33dbff");
 
-        // Use the dark theme. Ignored on mobile when there are more than three tabs.
-        //bottomBar.useDarkTheme(true);
+            // Use the dark theme. Ignored on mobile when there are more than three tabs.
+            //bottomBar.useDarkTheme(true);
 
-        // Use custom text appearance in tab titles.
-        //bottomBar.setTextAppearance(R.style.MyTextAppearance);
+            // Use custom text appearance in tab titles.
+            //bottomBar.setTextAppearance(R.style.MyTextAppearance);
 
-        // Use custom typeface that's located at the "/src/main/assets" directory. If using with
-        // custom text appearance, set the text appearance first.
-        //bottomBar.setTypeFace("MyFont.ttf");
+            // Use custom typeface that's located at the "/src/main/assets" directory. If using with
+            // custom text appearance, set the text appearance first.
+            //bottomBar.setTypeFace("MyFont.ttf");
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // end
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-        actionBar = getSupportActionBar();
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle(mUsername);
+            actionBar = getSupportActionBar();
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
+            actionBar.setDisplayHomeAsUpEnabled(true);
 
-        ImageView profile_pic = (ImageView) findViewById(R.id.tab_layout);
-        Glide.with(this).load(mPhotoUrl).into(profile_pic);
+            ImageView profile_pic = (ImageView) findViewById(R.id.tab_layout);
+            Glide.with(this).load(mPhotoUrl).into(profile_pic);
 
-        drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+            drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        NavigationView navView = (NavigationView) findViewById(R.id.navigation_view);
-        if (navView != null){
-            setupDrawerContent(navView);
+            NavigationView navView = (NavigationView) findViewById(R.id.navigation_view);
+            if (navView != null) {
+                setupDrawerContent(navView);
+            }
+
+            viewPager = (ViewPager) findViewById(R.id.tab_viewpager);
+            if (viewPager != null) {
+                setupViewPager(viewPager);
+            }
+
+
+            TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+            tabLayout.setupWithViewPager(viewPager);
+
+            tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    viewPager.setCurrentItem(tab.getPosition());
+                }
+
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
+
+                }
+
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+
+                }
+            });
+
         }
-
-        viewPager = (ViewPager)findViewById(R.id.tab_viewpager);
-        if (viewPager != null){
-            setupViewPager(viewPager);
-        }
-
-
-        TabLayout tabLayout = (TabLayout)findViewById(R.id.tabLayout);
-        tabLayout.setupWithViewPager(viewPager);
-
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                viewPager.setCurrentItem(tab.getPosition());
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-
     }
 
 
@@ -293,10 +318,10 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
     //    adapter.addFrag(new FloatingLabelsFragment(), "Floating Labels");
     //    adapter.addFrag(new FABLayoutFragment(), "FAB");
     //    adapter.addFrag(new SnackBarFragment(), "Snackbar");
-        adapter.addFrag(new CoordinatorFragment(), "About");
-        adapter.addFrag(new CoordinatorFragment2(), "Genres");
-        adapter.addFrag(new CoordinatorFragment2(), "Music");
-        adapter.addFrag(new CoordinatorFragment2(), "GiGs");
+        adapter.addFrag(new AboutFragment(), "About");
+        adapter.addFrag(new GenreFragment(), "Genres");
+        adapter.addFrag(new GenreFragment(), "Music");
+        adapter.addFrag(new GenreFragment(), "GiGs");
         adapter.addFrag(new PhotoFragment(), "Photos");
     //    adapter.addFrag(new CoordinatorFragment2(), "Media");
         viewPager.setAdapter(adapter);
@@ -435,7 +460,13 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
                 return true;
 
             case R.id.edit_profile_menu:
-                showEditProfileDialog();
+                if(viewPager.getCurrentItem() == 0)
+                    showEditAboutDialog();
+                if(viewPager.getCurrentItem() == 1)
+                    showEditGenreDialog();
+                else {
+                    showEditProfileDialog();
+                }
                 return true;
 
             case R.id.upload_photo_menu:
@@ -458,6 +489,69 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    private void showEditGenreDialog() {
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        final View inflater = layoutInflater.inflate(R.layout.dialog_edit_profile, null);
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle("Edit Genre");
+        alert.setIcon(R.drawable.ic_mode_edit_black);
+        alert.setView(inflater);
+
+        final EditText genre_text = (EditText) inflater.findViewById(R.id.edit_band_name);
+
+        alert.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton)
+            {
+
+                String genre_val = genre_text.getText().toString();
+                DatabaseReference newPage = mDatabase.push();
+                newPage.child("Genre").setValue(genre_val);
+
+                dialog.dismiss();
+            }
+        });
+
+        alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                dialog.cancel();
+            }
+        });
+
+        alert.show();
+    }
+
+    private void showEditAboutDialog() {
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        final View inflater = layoutInflater.inflate(R.layout.dialog_edit_profile, null);
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle("Edit About");
+        alert.setIcon(R.drawable.ic_mode_edit_black);
+        alert.setView(inflater);
+
+        final EditText about_text = (EditText) inflater.findViewById(R.id.edit_band_name);
+
+        alert.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton)
+            {
+                String about_val = about_text.getText().toString();
+                DatabaseReference newPage = mDatabase.push();
+                newPage.child("About").setValue(about_val);
+                dialog.dismiss();
+            }
+        });
+
+        alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                dialog.cancel();
+            }
+        });
+
+        alert.show();
+    }
+
 
 
     //////////// REMOVE THIS FOR A WORKING APP ///////////////////////
@@ -535,8 +629,10 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
         alert.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton)
             {
-                String band_name = text_band_name.getText().toString();
-                actionBar.setTitle(band_name);
+                String new_bandname = text_band_name.getText().toString();
+                actionBar.setTitle(new_bandname);
+                mUser.bandname = new_bandname;
+                mUser.update();
 
                 dialog.dismiss();
             }
