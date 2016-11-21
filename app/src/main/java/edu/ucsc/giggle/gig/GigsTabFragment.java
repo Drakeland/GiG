@@ -1,25 +1,24 @@
 package edu.ucsc.giggle.gig;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-//import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.ListViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.hardware.SensorManager;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.EditText;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -29,7 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import static edu.ucsc.giggle.gig.R.id.listView;
+//import android.support.v4.app.FragmentActivity;
 
 /**
  * Created by JanJan on 10/10/                          2016.
@@ -117,6 +116,8 @@ public class GigsTabFragment extends ListFragment {
 
         // Add items via the Button and EditText at the bottom of the window.
         final EditText text = (EditText)rootView.findViewById(R.id.todoText);
+        OnFocusChangeListener ofcListener = new MyFocusChangeListener();
+        text.setOnFocusChangeListener(ofcListener);
         final Button button = (Button)rootView.findViewById(R.id.addButton);
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -218,6 +219,18 @@ public class GigsTabFragment extends ListFragment {
         @Override
         public int getItemCount() {
             return mValues.length;
+        }
+    }
+    private class MyFocusChangeListener implements OnFocusChangeListener {
+
+        public void onFocusChange(View v, boolean hasFocus){
+
+            if(v.getId() == R.id.todoText && !hasFocus) {
+                //sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+                InputMethodManager imm =  (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
+            }
         }
     }
 }
