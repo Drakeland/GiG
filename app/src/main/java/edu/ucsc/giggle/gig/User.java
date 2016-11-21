@@ -34,6 +34,8 @@ public class User {
                                 // - Cannot be changed.
     public String bandname;     // Display name within GiG app. Can be changed freely.
 
+    public String[] gigs;       // A list of the band's gigs.
+
     // Constructors
     public User () {}
 
@@ -46,6 +48,10 @@ public class User {
     public void setUsernameFromEmail(@NonNull String email) {
         username = email.substring(0, email.lastIndexOf('@'));
 //        Log.d(TAG, "username := \"" + username + "\"");
+    }
+
+    public DatabaseReference gigsRef() {
+        return usersTable().child(username).child("gigs");
     }
 
     public static DatabaseReference usersTable() {

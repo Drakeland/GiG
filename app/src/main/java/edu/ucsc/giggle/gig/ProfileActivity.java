@@ -118,6 +118,7 @@ public class ProfileActivity extends AppCompatActivity
         }
 
 
+
         // Initialize Google API
         mGoogleApiClient = new GoogleApiClient.Builder(this).
                 enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */).
@@ -169,10 +170,18 @@ public class ProfileActivity extends AppCompatActivity
 
     private void setupViewPager(ViewPager viewPager){
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+
+        Bundle bundle = new Bundle();
+        bundle.putString("username", mUser.username);
+        bundle.putString("bandname", mUser.bandname);
+
+        GigsTabFragment gigs_tf = new GigsTabFragment();
+        gigs_tf.setArguments(bundle);
+
         adapter.addFrag(new AboutTabFragment(), getString(R.string.about_label));
         adapter.addFrag(new GenreTabFragment(), getString(R.string.genres_label));
         adapter.addFrag(new MusicTabFragment(), getString(R.string.music_label));
-        adapter.addFrag(new GigsTabFragment(), getString(R.string.gigs_label));
+        adapter.addFrag(gigs_tf, getString(R.string.gigs_label));
         adapter.addFrag(new PhotosTabFragment(), getString(R.string.photos_label));
         viewPager.setAdapter(adapter);
     }

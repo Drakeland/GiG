@@ -47,6 +47,7 @@ dependencies {
 
     // Firebase
     compile 'com.google.firebase:firebase-database:9.4.0'
+    compile 'com.google.firebase:firebase-storage:9.4.0'
     compile 'com.google.firebase:firebase-auth:9.4.0'
     compile 'com.google.firebase:firebase-config:9.4.0'
     compile 'com.google.android.gms:play-services-appinvite:9.4.0'
@@ -64,6 +65,8 @@ dependencies {
     // Glide
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.android.support:support-v4:23.1.0'
+
+    // JUnit
     compile 'junit:junit:4.12'
 }
 
