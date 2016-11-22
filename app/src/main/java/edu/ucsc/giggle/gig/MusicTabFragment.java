@@ -1,5 +1,6 @@
 package edu.ucsc.giggle.gig;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -10,18 +11,44 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Button;
+import android.media.MediaPlayer;
+import android.media.AudioManager;
+
+import java.io.IOException;
+
+import static edu.ucsc.giggle.gig.R.raw.track1;
 
 /**
  * Created by JanJan on 10/10/2016.
  */
 public class MusicTabFragment extends Fragment {
-    RecyclerView recyclerView;
+    //RecyclerView recyclerView;
+
+    Button play;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        View rootView = inflater.inflate(R.layout.coordinator_layout, container, false);
-        recyclerView = (RecyclerView)rootView.findViewById(R.id.recyclerView);
-        setupRecyclerView(recyclerView);
+        View rootView = inflater.inflate(R.layout.music_player_layout, container, false);
+        /*recyclerView = (RecyclerView)rootView.findViewById(R.id.recyclerView);
+        setupRecyclerView(recyclerView);*/
+
+        Button play = (Button) rootView.findViewById(R.id.play);
+
+        final MediaPlayer sound = MediaPlayer.create(this.getContext(), R.raw.track1);
+
+        play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*try{
+                sound.prepare();
+                } catch (IOException e){
+                    e.printStackTrace();
+                }*/
+                sound.start();
+                ((Button) v).setText("clicked");
+            }
+        });
         return rootView;
     }
 
@@ -79,5 +106,6 @@ public class MusicTabFragment extends Fragment {
         public int getItemCount() {
             return mValues.length;
         }
+
     }
 }
