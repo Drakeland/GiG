@@ -22,6 +22,8 @@
         </activity>
         <activity android:name="edu.ucsc.giggle.gig.ProfileActivity"
             android:label="@string/band_name"/>
+        <activity android:name=".MusicUploadActivity"
+            android:label="Music Upload Activity"/>
         <activity android:name=".EditingActivity"
             android:label="Editing Profile Page"/>
         <meta-data

@@ -4,11 +4,14 @@
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
 
-    <item android:id="@+id/upload_settings" android:title="@string/upload_settings"
+<!--    <item android:id="@+id/upload_settings" android:title="@string/upload_settings"
         android:orderInCategory="100" app:showAsAction="never"/>
-        <!--android:onClick="loadImagefromGallery"/>-->
+        &lt;!&ndash;android:onClick="loadImagefromGallery"/>&ndash;&gt;
 
     <item android:id="@+id/editing_settings" android:title="Edit Page"
+        android:orderInCategory="100" app:showAsAction="never"/>-->
+
+    <item android:id="@+id/upload_music" android:title="Upload music"
         android:orderInCategory="100" app:showAsAction="never"/>
 
     <item

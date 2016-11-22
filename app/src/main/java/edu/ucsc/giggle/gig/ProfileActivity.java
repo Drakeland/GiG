@@ -459,6 +459,10 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
 
                 return true;
 
+            case R.id.upload_music:
+                startActivity(new Intent(ProfileActivity.this,MusicUploadActivity.class));
+                return true;
+
             case R.id.edit_profile_menu:
                 if(viewPager.getCurrentItem() == 0)
                     showEditAboutDialog();
@@ -567,6 +571,7 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
         alert.setView(inflater);
 
 
+
         alert.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton)
             {
@@ -608,6 +613,7 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
             LayoutInflater layoutInflater = LayoutInflater.from(getApplicationContext());
             View inflater = layoutInflater.inflate(R.layout.dialog_upload_profile, null);
             ImageButton photo_btn = (ImageButton) inflater.findViewById(R.id.photo_name);
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
             PhotoURI = data.getData();
             Log.v("this", "PhotoURI:" + PhotoURI.toString());
             photo_btn.setImageURI(PhotoURI);
