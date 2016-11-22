@@ -100,7 +100,7 @@ public class GigsTabFragment extends ListFragment {
             public void onChildRemoved(DataSnapshot dataSnapshot){
                 String value = dataSnapshot.getValue(String.class);
                 adapter.remove(value);
-                Log.d(TAG, "****************************************************************delete");
+                //Log.d(TAG, "****************************************************************delete");
             }
 
             // The following functions are also required in ChildEventListener implementations.

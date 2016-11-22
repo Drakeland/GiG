@@ -1,17 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-<!--<android.support.design.widget.CoordinatorLayout-->
-    <!--android:id="@+id/main_content"-->
-
-
-
-
-
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -19,19 +10,27 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-    <!--<android.support.design.widget.FloatingActionButton-->
-        <!--android:id="@+id/fab2"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="end|bottom"-->
-        <!--app:fabSize="normal"-->
-        <!--android:src="@drawable/ic_location_on_white_24dp"-->
-        <!--android:layout_marginRight="16dp"-->
-        <!--android:layout_marginBottom="16dp"/>-->
-
-
-
-
+    <EditText
+        android:id="@+id/edit_text"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:imeOptions="actionDone"
+        android:inputType="textMultiLine"
+        />
+    <TextView
+        android:id="@+id/text_view"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        app:fabSize="normal"
+        android:src="@drawable/ic_location_on_white_24dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        />
 </RelativeLayout>
 
 
