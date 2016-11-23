@@ -28,12 +28,26 @@ public class PhotoFragment extends Fragment{
     DatabaseReference mDatabase;
 
     FirebaseRecyclerAdapter<PhotoData, PhotoViewHolder> mAdapter;
+    //static final String TAG = "GigsTabFragment";
+    User mUser;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+
+
         View rootView = inflater.inflate(R.layout.photosfrag_layout, container, false);
+        // Connect to the Firebase database
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        // Get a reference to the todoItems child items it the database
+       final DatabaseReference photosRef = database.getReference("photos").child(mUser.username);
+        Bundle bundle = getArguments();
+        mUser = new User(bundle.getString("username"),
+                bundle.getString("bandname"));
+
         mDatabase = FirebaseDatabase.getInstance().getReference().child("profile_page");
+                 //FirebaseDatabase.getInstance().getReference().child("profile_page");
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new GridLayoutManager(recyclerView.getContext(),2));
         recyclerView.setHasFixedSize(true);
@@ -43,6 +57,9 @@ public class PhotoFragment extends Fragment{
                 R.layout.photorecycler_item,
                 PhotoViewHolder.class,
                 mDatabase
+
+
+
         ){
 
             @Override
@@ -53,6 +70,7 @@ public class PhotoFragment extends Fragment{
         };
 
         recyclerView.setAdapter(mAdapter);
+
 
         return rootView;
     }

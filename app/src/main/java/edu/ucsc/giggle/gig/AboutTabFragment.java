@@ -41,13 +41,17 @@ public class AboutTabFragment extends Fragment {
     RecyclerView recyclerView;
     View rootView;
     EditText editText;
+    User mUser;
     //TextView textView;
-    DatabaseReference myRef;
+    DatabaseReference aboutRef;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         rootView = inflater.inflate(R.layout.aboutfrag_layout, container, false);
         recyclerView = (RecyclerView)rootView.findViewById(R.id.recyclerView);
         setupRecyclerView(recyclerView);
+        Bundle bundle = getArguments();
+        mUser = new User(bundle.getString("username"),
+                bundle.getString("bandname"));
         return rootView;
     }
     public void onViewCreated( View view, Bundle savedInstanceState) {
@@ -88,7 +92,7 @@ public class AboutTabFragment extends Fragment {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         // Get a reference to the todoItems child items it the database
-        myRef = database.getReference("About_Tab_Text");
+        final DatabaseReference aboutRef = database.getReference("about").child(mUser.username);
 
          class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
             // ...
@@ -104,7 +108,7 @@ public class AboutTabFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // Create a new child with a auto-generated ID.
-                DatabaseReference childRef = myRef.push();
+                DatabaseReference childRef = aboutRef.push();
                 // Set the child's data to the value passed in from the text box.
                 childRef.setValue(editText.getText().toString());
                 //String result = editText.getText().toString();
@@ -113,7 +117,7 @@ public class AboutTabFragment extends Fragment {
         });
         // Assign a listener to detect changes to the child items
         // of the database reference.
-        myRef.addChildEventListener(new ChildEventListener(){
+        aboutRef.addChildEventListener(new ChildEventListener(){
 
             // This function is called once for each child that exists
             // when the listener is added. Then it is called
@@ -208,7 +212,7 @@ public class AboutTabFragment extends Fragment {
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
                 // Create a new child with a auto-generated ID.
-                DatabaseReference childRef = myRef.push();
+                //DatabaseReference childRef = aboutRef.push();
 
                 // Set the child's data to the value passed in from the text box.
                 //childRef.setValue(editText.getText().toString());

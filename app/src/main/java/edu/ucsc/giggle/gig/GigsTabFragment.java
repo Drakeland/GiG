@@ -38,7 +38,8 @@ public class GigsTabFragment extends ListFragment {
     RecyclerView recyclerView;
     View rootView;
     static final String TAG = "GigsTabFragment";
-   // ListView listView;
+    User mUser;
+    // ListView listView;
     //ListViewCompat listView;
     //static ListView listView;
     //static View rootView;
@@ -51,14 +52,18 @@ public class GigsTabFragment extends ListFragment {
         recyclerView = (RecyclerView)rootView.findViewById(R.id.recyclerView);
         setupRecyclerView(recyclerView);
 
+        Bundle bundle = getArguments();
+        mUser = new User(bundle.getString("username"),
+                bundle.getString("bandname"));
+
         return rootView;
     }
 
     @Override
     public void onViewCreated( View view, Bundle savedInstanceState) {
-      super.onViewCreated(view, savedInstanceState);
-    //public void onCreate(  Bundle savedInstanceState) {
-      //  super.onCreate(savedInstanceState);
+        super.onViewCreated(view, savedInstanceState);
+        //public void onCreate(  Bundle savedInstanceState) {
+        //  super.onCreate(savedInstanceState);
 //        View rootView = inflater.inflate(R.layout.coordinator_layout, container, false);
 //        recyclerView = (RecyclerView)rootView.findViewById(R.id.recyclerView);
 //        setupRecyclerView(recyclerView);
@@ -81,11 +86,11 @@ public class GigsTabFragment extends ListFragment {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         // Get a reference to the todoItems child items it the database
-        final DatabaseReference myRef = database.getReference("todoItems");
+        final DatabaseReference gigsRef = database.getReference("gigs").child(mUser.username);
 
         // Assign a listener to detect changes to the child items
         // of the database reference.
-        myRef.addChildEventListener(new ChildEventListener(){
+        gigsRef.addChildEventListener(new ChildEventListener() {
 
             // This function is called once for each child that exists
             // when the listener is added. Then it is called
@@ -100,7 +105,7 @@ public class GigsTabFragment extends ListFragment {
             public void onChildRemoved(DataSnapshot dataSnapshot){
                 String value = dataSnapshot.getValue(String.class);
                 adapter.remove(value);
-                //Log.d(TAG, "****************************************************************delete");
+                Log.d(TAG, "****************************************************************delete");
             }
 
             // The following functions are also required in ChildEventListener implementations.
@@ -110,21 +115,28 @@ public class GigsTabFragment extends ListFragment {
             @Override
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
-                Log.w("TAG:", "Failed to read value.", error.toException());
+                Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
 
         // Add items via the Button and EditText at the bottom of the window.
-        final EditText text = (EditText)rootView.findViewById(R.id.todoText);
-        OnFocusChangeListener ofcListener = new MyFocusChangeListener();
-        text.setOnFocusChangeListener(ofcListener);
+        final EditText text = (EditText)rootView.findViewById(R.id.GiGText);
+        text.setOnFocusChangeListener(new OnFocusChangeListener() {
+            public void onFocusChange(View v, boolean hasFocus){
+                if (v.getId() == R.id.GiGText && !hasFocus) {
+                    //sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+                    InputMethodManager imm =  (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+        });
         final Button button = (Button)rootView.findViewById(R.id.addButton);
 
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
                 // Create a new child with a auto-generated ID.
-                DatabaseReference childRef = myRef.push();
+                DatabaseReference childRef = gigsRef.push();
 
                 // Set the child's data to the value passed in from the text box.
                 childRef.setValue(text.getText().toString());
@@ -138,7 +150,7 @@ public class GigsTabFragment extends ListFragment {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
 
-                Query myQuery = myRef.orderByValue().equalTo((String)
+                Query myQuery = gigsRef.orderByValue().equalTo((String)
                         listView.getItemAtPosition(position));
 
                 myQuery.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -161,13 +173,13 @@ public class GigsTabFragment extends ListFragment {
 
 
 
- /////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
     private void setupRecyclerView(RecyclerView recyclerView){
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         //recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(getActivity(), GigsTabModel.data));
         //edit = (EditText) recyclerView.findViewById(R.id.GigsEditText);
         //SharedPreferences settings = this.getActivity().getSharedPreferences("PREFS", 0);
-        //edit.setText(settings.getString("value",""));
+        //e dit.setText(settings.getString("value",""));
     }
 
     public static class SimpleStringRecyclerViewAdapter extends RecyclerView.Adapter<SimpleStringRecyclerViewAdapter.ViewHolder>{
@@ -219,18 +231,6 @@ public class GigsTabFragment extends ListFragment {
         @Override
         public int getItemCount() {
             return mValues.length;
-        }
-    }
-    private class MyFocusChangeListener implements OnFocusChangeListener {
-
-        public void onFocusChange(View v, boolean hasFocus){
-
-            if(v.getId() == R.id.todoText && !hasFocus) {
-                //sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
-                InputMethodManager imm =  (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-
-            }
         }
     }
 }

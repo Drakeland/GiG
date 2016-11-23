@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -22,6 +23,8 @@
         </activity>
         <activity android:name="edu.ucsc.giggle.gig.SignInActivity"
                   android:label="@string/sign_in"/>
+        <activity android:name="edu.ucsc.giggle.gig.MusicUploadActivity"
+            android:label="uploadMusic"/>
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
