@@ -18,6 +18,8 @@
         </activity>
         <activity android:name="edu.ucsc.giggle.gig.SignInActivity"
                   android:label="@string/sign_in"/>
+        <activity android:name="edu.ucsc.giggle.gig.BandListActivity"
+            android:label="@string/sign_in"/>
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

@@ -53,9 +53,8 @@ public class GigsTabFragment extends ListFragment {
         setupRecyclerView(recyclerView);
 
         Bundle bundle = getArguments();
-        mUser = new User(bundle.getString("username"), bundle.getString("bandname"));
-
-        Log.d(TAG, "**** User retrieved: " + mUser.username);
+        mUser = new User(bundle.getString("username"),
+                         bundle.getString("bandname"));
 
         return rootView;
     }
@@ -87,11 +86,11 @@ public class GigsTabFragment extends ListFragment {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         // Get a reference to the todoItems child items it the database
-        final DatabaseReference myRef = mUser.gigsRef();
+        final DatabaseReference gigsRef = database.getReference("gigs").child(mUser.username);
 
         // Assign a listener to detect changes to the child items
         // of the database reference.
-        myRef.addChildEventListener(new ChildEventListener() {
+        gigsRef.addChildEventListener(new ChildEventListener() {
 
             // This function is called once for each child that exists
             // when the listener is added. Then it is called
@@ -116,7 +115,7 @@ public class GigsTabFragment extends ListFragment {
             @Override
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
-                Log.w("TAG:", "Failed to read value.", error.toException());
+                Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
 
@@ -137,7 +136,7 @@ public class GigsTabFragment extends ListFragment {
             public void onClick(View v) {
 
                 // Create a new child with a auto-generated ID.
-                DatabaseReference childRef = myRef.push();
+                DatabaseReference childRef = gigsRef.push();
 
                 // Set the child's data to the value passed in from the text box.
                 childRef.setValue(text.getText().toString());
@@ -151,7 +150,7 @@ public class GigsTabFragment extends ListFragment {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
 
-                Query myQuery = myRef.orderByValue().equalTo((String)
+                Query myQuery = gigsRef.orderByValue().equalTo((String)
                         listView.getItemAtPosition(position));
 
                 myQuery.addListenerForSingleValueEvent(new ValueEventListener() {

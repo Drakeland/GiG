@@ -71,7 +71,6 @@ public class ProfileActivity extends AppCompatActivity
     private FirebaseUser mFirebaseUser;
 
     private User mUser;
-    Bitmap profilePic = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,14 +105,13 @@ public class ProfileActivity extends AppCompatActivity
                         // user does not exist, use default bandname from Google Sign-in and add to DB
                         mUser.bandname = mFirebaseUser.getDisplayName();
                         mUser.update();
+                        mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
                     }
                     actionBar.setTitle(mUser.bandname);
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
+                public void onCancelled(DatabaseError databaseError) {}
             });
         }
 
@@ -175,14 +173,19 @@ public class ProfileActivity extends AppCompatActivity
         bundle.putString("username", mUser.username);
         bundle.putString("bandname", mUser.bandname);
 
-        GigsTabFragment gigs_tf = new GigsTabFragment();
-        gigs_tf.setArguments(bundle);
+        AboutTabFragment  aboutTabFragment  = new  AboutTabFragment();
+        GenreTabFragment  genreTabFragment  = new  GenreTabFragment();
+        MusicTabFragment  musicTabFragment  = new  MusicTabFragment();
+        GigsTabFragment   gigsTabFragment   = new   GigsTabFragment();
+        PhotosTabFragment photosTabFragment = new PhotosTabFragment();
 
-        adapter.addFrag(new AboutTabFragment(), getString(R.string.about_label));
-        adapter.addFrag(new GenreTabFragment(), getString(R.string.genres_label));
-        adapter.addFrag(new MusicTabFragment(), getString(R.string.music_label));
-        adapter.addFrag(gigs_tf, getString(R.string.gigs_label));
-        adapter.addFrag(new PhotosTabFragment(), getString(R.string.photos_label));
+        gigsTabFragment.setArguments(bundle);
+
+        adapter.addFrag( aboutTabFragment, getString(R.string.about_label));
+        adapter.addFrag( genreTabFragment, getString(R.string.genres_label));
+        adapter.addFrag( musicTabFragment, getString(R.string.music_label));
+        adapter.addFrag(  gigsTabFragment, getString(R.string.gigs_label));
+        adapter.addFrag(photosTabFragment, getString(R.string.photos_label));
         viewPager.setAdapter(adapter);
     }
 
