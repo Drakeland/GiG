@@ -1,11 +1,14 @@
 package edu.ucsc.giggle.gig;
 
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Path;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
@@ -43,6 +46,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -91,6 +95,7 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
     private StorageReference mStorage;
     private ProgressDialog progressDialog;
     private DatabaseReference mDatabase;
+    boolean clicked = false;
 
     private User mUser;
     Bitmap profilePic = null;
@@ -244,13 +249,16 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
     }
 
 
+    /*
+
     public void loadImagefromGallery(View v){
+        clicked = true;
         // Create intent to Open Image applications like Gallery, Google Photos
         Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         // Start the Intent
         startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
-    }
+    } */
 
     /*
     @Override
@@ -320,10 +328,9 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
     //    adapter.addFrag(new SnackBarFragment(), "Snackbar");
         adapter.addFrag(new AboutFragment(), "About");
         adapter.addFrag(new GenreFragment(), "Genres");
-        adapter.addFrag(new GenreFragment(), "Music");
+        adapter.addFrag(new MusicFragment(), "Music");
         adapter.addFrag(new GenreFragment(), "GiGs");
         adapter.addFrag(new PhotoFragment(), "Photos");
-    //    adapter.addFrag(new CoordinatorFragment2(), "Media");
         viewPager.setAdapter(adapter);
     }
 
@@ -523,6 +530,7 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
             }
         });
 
+
         alert.show();
     }
 
@@ -563,47 +571,29 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
     private void showUploadProfileDialog() {
         LayoutInflater layoutInflater = LayoutInflater.from(this);
         View inflater = layoutInflater.inflate(R.layout.dialog_upload_profile, null);
-        ImageButton imageButton = (ImageButton) inflater.findViewById(R.id.photo_name);
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-        alert.setTitle("Upload Photo");
-        alert.setIcon(R.drawable.ic_mode_edit_black);
-        alert.setView(inflater);
+        imageButton = (ImageButton) inflater.findViewById(R.id.photo_name);
+        final Dialog dialog = new Dialog(this);
 
 
+        dialog.setTitle("Upload Photo");
+        dialog.setContentView(inflater);
 
-        alert.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton)
-            {
-                progressDialog.setMessage("Uploading...");
-                progressDialog.show();
-                StorageReference filepath = mStorage.child("Photos").child(PhotoURI.getLastPathSegment());
 
-                filepath.putFile(PhotoURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
-
-                        DatabaseReference newPage = mDatabase.push();
-                        newPage.child("Photos").setValue(downloadUrl.toString());
-
-                        progressDialog.dismiss();
-
-                    }
-                });
-
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 dialog.dismiss();
-            }
-        });
+                // Create intent to Open Image applications like Gallery, Google Photos
+                Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                // Start the Intent
+                startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
 
-        alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                dialog.cancel();
-            }
-        });
 
-        alert.show();
+            }
+
+        });
+        dialog.show();
     }
 
     @Override
@@ -612,11 +602,50 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
         if(requestCode == RESULT_LOAD_IMG && resultCode == RESULT_OK){
             LayoutInflater layoutInflater = LayoutInflater.from(getApplicationContext());
             View inflater = layoutInflater.inflate(R.layout.dialog_upload_profile, null);
-            ImageButton photo_btn = (ImageButton) inflater.findViewById(R.id.photo_name);
+            imageButton = (ImageButton) inflater.findViewById(R.id.photo_name);
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             PhotoURI = data.getData();
             Log.v("this", "PhotoURI:" + PhotoURI.toString());
-            photo_btn.setImageURI(PhotoURI);
+            imageButton.setImageURI(PhotoURI);
+
+            alert.setTitle("Upload Photo");
+            alert.setIcon(R.drawable.ic_mode_edit_black);
+            alert.setView(inflater);
+
+
+
+            alert.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton)
+                {
+                    progressDialog.setMessage("Uploading...");
+                    progressDialog.show();
+                    StorageReference filepath = mStorage.child("Photos").child(PhotoURI.getLastPathSegment());
+
+                    filepath.putFile(PhotoURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
+
+                            DatabaseReference newPage = mDatabase.push();
+                            newPage.child("Photos").setValue(downloadUrl.toString());
+
+                            progressDialog.dismiss();
+
+                        }
+                    });
+
+                    dialog.dismiss();
+                }
+            });
+
+            alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    dialog.cancel();
+                }
+            });
+
+            alert.show();
 
         }
     }
