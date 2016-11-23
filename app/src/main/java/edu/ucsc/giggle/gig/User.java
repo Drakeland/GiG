@@ -39,16 +39,22 @@ public class User {
     // Constructors
     public User () {}
 
-    public User (final String username) {
+    public User(final String username) {
         this.username = username;
+        Log.d(TAG, "Attempting to lookup User(" + username + "). ---------------------------");
         usersTable().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (Iterator<DataSnapshot> it = dataSnapshot.getChildren().iterator(); it.hasNext(); ) {
                     User user = (User) it.next().getValue(User.class);
-                    if (user.username == username) {
+                    Log.d(TAG, "- " + user.toString());
+                    Log.d(TAG, "- - Comparing \"" + user.username + "\" vs \"" + username + "\".");
+                    if (user.username.equals(username)) {
+                        Log.d(TAG, "- - Correct user found, setting bandname. --------------------------------");
                         bandname = user.bandname;
                         break;
+                    } else {
+                        Log.d(TAG, "- - Comparison failed.");
                     }
                 }
             }

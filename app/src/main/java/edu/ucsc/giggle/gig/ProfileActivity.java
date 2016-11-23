@@ -60,6 +60,7 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
 
     private User mUser;
     private User pUser;
+    private boolean ownProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +70,8 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
         Toolbar toolbar = (Toolbar)findViewById(R.id.mToolbar);
         setSupportActionBar(toolbar);
 
-        pUser = new User(getIntent().getStringExtra("username"));
+        pUser = new User(getIntent().getStringExtra("username"),
+                         getIntent().getStringExtra("bandname"));
 
         // Initialize Firebase Auth
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -84,6 +86,7 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
         } else {
             String mEmail = mFirebaseUser.getEmail();
             mUser.setUsernameFromEmail(mEmail);
+            if (mUser.username == pUser.username) ownProfile = true;
 
             User.usersTable().child(mUser.username).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -94,10 +97,9 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
                     } else {
                         // user does not exist, use default bandname from Google Sign-in and add to DB
                         mUser.bandname = mFirebaseUser.getDisplayName();
+                        mUser.photoUrl = mFirebaseUser.getPhotoUrl().toString();
                         mUser.update();
-                        mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
                     }
-                    actionBar.setTitle(mUser.bandname);
                 }
 
                 @Override
@@ -107,6 +109,11 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
 
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle(pUser.bandname);
+        if (pUser.bandname != null)
+            Log.d(TAG, "***********************************************************************");
+        else
+            Log.d(TAG, "#######################################################################");
 
         ImageView profile_pic = (ImageView) findViewById(R.id.profile_pic);
         Glide.with(this).load(pUser.photoUrl).into(profile_pic);
@@ -144,6 +151,11 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
             }
         });
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     private void setupViewPager(ViewPager viewPager){
@@ -233,6 +245,10 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_profile, menu);
+
+        // only allow profile editing if the user is viewing their own profile
+        if (!ownProfile) menu.removeItem(R.id.edit_profile_menu);
+
         return true;
     }
 

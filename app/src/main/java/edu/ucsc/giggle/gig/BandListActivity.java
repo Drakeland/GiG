@@ -119,6 +119,7 @@ public class BandListActivity extends AppCompatActivity implements GoogleApiClie
                             User user = (User) firstChild.getValue(User.class);
                             Intent intent = new Intent(BandListActivity.this, ProfileActivity.class);
                             intent.putExtra("username", user.username);
+                            intent.putExtra("bandname", user.bandname);
                             startActivity(intent);
                         }
                     }
