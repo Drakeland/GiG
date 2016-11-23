@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.hardware.SensorManager;
 import android.widget.EditText;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -56,35 +57,8 @@ public class AboutTabFragment extends Fragment {
     }
     public void onViewCreated( View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        editText = (EditText)rootView.findViewById(R.id.edit_text);
-       // textView = (TextView)rootView.findViewById(R.id.text_view);
 
-        OnFocusChangeListener ofcListener = new AboutTabFragment.MyFocusChangeListener();
-        editText.setOnFocusChangeListener(ofcListener);
 
-        editText.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                editText.setEnabled(true);
-                return false;
-            }
-        });
-        editText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-                    @Override
-                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                        if (actionId == EditorInfo.IME_ACTION_SEARCH ||
-                                actionId == EditorInfo.IME_ACTION_DONE ||
-                                event.getAction() == KeyEvent.ACTION_DOWN &&
-                                        event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                            if (!event.isShiftPressed()) {
-                                // the user is done typing.
-                                editText.setEnabled(false);
-                                return true; // consume.
-                            }
-                        }
-                        return false; // pass on to other listeners.
-                    }
-                });
         // Create a new Adapter
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, android.R.id.text1);
@@ -94,27 +68,6 @@ public class AboutTabFragment extends Fragment {
         // Get a reference to the todoItems child items it the database
         final DatabaseReference aboutRef = database.getReference("about").child(mUser.username);
 
-         class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
-            // ...
-
-            public ScrollAwareFABBehavior(Context context, AttributeSet attrs) {
-                super();
-            }
-
-            // ...
-        }
-        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab3);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Create a new child with a auto-generated ID.
-                DatabaseReference childRef = aboutRef.push();
-                // Set the child's data to the value passed in from the text box.
-                childRef.setValue(editText.getText().toString());
-                //String result = editText.getText().toString();
-                //textView.setText(result);
-            }
-        });
         // Assign a listener to detect changes to the child items
         // of the database reference.
         aboutRef.addChildEventListener(new ChildEventListener(){
@@ -125,7 +78,9 @@ public class AboutTabFragment extends Fragment {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
                 String value = dataSnapshot.getValue(String.class);
-                adapter.add(value);
+                //adapter.add(value);
+                editText.setText("");
+                editText.setText(value);
             }
 
             // This function is called each time a child item is removed.
@@ -145,6 +100,41 @@ public class AboutTabFragment extends Fragment {
                 Log.w("TAG:", "Failed to read value.", error.toException());
             }
         });
+
+        editText = (EditText)rootView.findViewById(R.id.edit_text);
+        //textView = (TextView)rootView.findViewById(R.id.text_view);
+
+        OnFocusChangeListener ofcListener = new AboutTabFragment.MyFocusChangeListener();
+        editText.setOnFocusChangeListener(ofcListener);
+
+
+
+        final Button saveButton = (Button)rootView.findViewById(R.id.saveButton);
+        final Button editButton = (Button)rootView.findViewById(R.id.editButton);
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                // Create a new child with a auto-generated ID.
+                aboutRef.getRef().removeValue();
+                DatabaseReference childRef = aboutRef.push();
+
+                // Set the child's data to the value passed in from the text box.
+                childRef.setValue(editText.getText().toString());
+
+                String result = editText.getText().toString();
+                editText.setEnabled(false);
+
+
+            }
+        });
+        editButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                editText.setEnabled(true);
+            }
+        });
+
+
     }
 
     private void setupRecyclerView(RecyclerView recyclerView){
@@ -212,13 +202,11 @@ public class AboutTabFragment extends Fragment {
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
                 // Create a new child with a auto-generated ID.
-                //DatabaseReference childRef = aboutRef.push();
-
                 // Set the child's data to the value passed in from the text box.
                 //childRef.setValue(editText.getText().toString());
                 //String result = editText.getText().toString();
                 //editText.setText( result, TextView.BufferType.EDITABLE);
-                //editText.setEnabled(false);
+
 
             }
         }

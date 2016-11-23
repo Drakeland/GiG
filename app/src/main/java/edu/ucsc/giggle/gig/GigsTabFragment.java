@@ -200,7 +200,6 @@ public class GigsTabFragment extends ListFragment {
             }
 
         }
-
         public String getValueAt(int position) {
             return mValues[position];
         }
@@ -209,14 +208,12 @@ public class GigsTabFragment extends ListFragment {
             mContext = context;
             mValues = items;
         }
-
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(android.R.layout.simple_list_item_1, parent, false);
             return new ViewHolder(view);
         }
-
         @Override
         public void onBindViewHolder(final ViewHolder holder, final int position) {
             holder.mTextView.setText(mValues[position]);
@@ -227,7 +224,6 @@ public class GigsTabFragment extends ListFragment {
                 }
             });
         }
-
         @Override
         public int getItemCount() {
             return mValues.length;

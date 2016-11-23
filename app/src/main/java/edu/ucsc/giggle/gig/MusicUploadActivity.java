@@ -42,7 +42,7 @@ class Mp3Filter implements FilenameFilter{
 
 public class MusicUploadActivity extends ListActivity {
 
-    private String SD_PATH = new String("/storage/external_SD/Music/");
+    private String SD_PATH = Environment.getExternalStorageDirectory().getPath();
     private List<String> songs = new ArrayList<String>();
     private TextView musicFile;
     private Button submitBtn;
