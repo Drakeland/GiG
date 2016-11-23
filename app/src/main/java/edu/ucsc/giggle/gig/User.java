@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -33,11 +34,29 @@ public class User {
     public String username;     // As in the email <username@gmail.com> from Google sign-in
                                 // - Cannot be changed.
     public String bandname;     // Display name within GiG app. Can be changed freely.
-
-    public String[] gigs;       // A list of the band's gigs.
+    public String photoUrl;
 
     // Constructors
     public User () {}
+
+    public User (final String username) {
+        this.username = username;
+        usersTable().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (Iterator<DataSnapshot> it = dataSnapshot.getChildren().iterator(); it.hasNext(); ) {
+                    User user = (User) it.next().getValue(User.class);
+                    if (user.username == username) {
+                        bandname = user.bandname;
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        });
+    }
 
     public User(String username, String bandname) {
         this.username = username;
@@ -64,5 +83,8 @@ public class User {
         usersTable().child(username).setValue(this);
     }
 
-
+    @Override
+    public String toString() {
+        return String.format("User(%s, %s)", username, bandname);
+    }
 }

@@ -113,10 +113,9 @@ public class SignInActivity extends AppCompatActivity implements
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithCredential", task.getException());
-                            Toast.makeText(SignInActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignInActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                         } else {
-                            startActivity(new Intent(SignInActivity.this, ProfileActivity.class));
+                            startActivity(new Intent(SignInActivity.this, BandListActivity.class));
                             finish();
                         }
                     }

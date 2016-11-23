@@ -165,12 +165,10 @@ public class GigsTabFragment extends ListFragment {
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                     }
-                })
-                ;}
-        })
-        ;}
-
-
+                });
+            }
+        });
+    }
 
 
  /////////////////////////////////////////////////////////////////////////////////////////////////////

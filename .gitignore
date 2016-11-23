@@ -4,3 +4,7 @@
 *.bin
 
 app/.idea/workspace.xml
+
+*.bin
+
+*.lock

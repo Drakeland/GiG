@@ -8,7 +8,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="edu.ucsc.giggle.gig.ProfileActivity"
+        <activity android:name="edu.ucsc.giggle.gig.BandListActivity"
                   android:label="GiG">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,7 +18,7 @@
         </activity>
         <activity android:name="edu.ucsc.giggle.gig.SignInActivity"
                   android:label="@string/sign_in"/>
-        <activity android:name="edu.ucsc.giggle.gig.BandListActivity"
+        <activity android:name="edu.ucsc.giggle.gig.ProfileActivity"
             android:label="@string/sign_in"/>
         <meta-data
             android:name="com.google.android.gms.version"

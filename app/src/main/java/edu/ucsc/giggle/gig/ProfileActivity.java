@@ -2,11 +2,6 @@ package edu.ucsc.giggle.gig;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -18,7 +13,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 
 import android.support.v4.widget.DrawerLayout;
@@ -32,7 +26,6 @@ import android.view.MenuItem;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import android.support.design.widget.CoordinatorLayout;
 import android.view.View;
@@ -41,9 +34,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.bumptech.glide.request.target.Target;
-import com.google.android.gms.appinvite.AppInvite;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -51,11 +41,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
-public class ProfileActivity extends AppCompatActivity
-        implements GoogleApiClient.OnConnectionFailedListener {
+public class ProfileActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "ProfileActivity";
     public static final String ANONYMOUS = "anonymous";
     private CoordinatorLayout coordinatorLayout;
@@ -71,6 +59,7 @@ public class ProfileActivity extends AppCompatActivity
     private FirebaseUser mFirebaseUser;
 
     private User mUser;
+    private User pUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,12 +69,13 @@ public class ProfileActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar)findViewById(R.id.mToolbar);
         setSupportActionBar(toolbar);
 
+        pUser = new User(getIntent().getStringExtra("username"));
+
         // Initialize Firebase Auth
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
         mUser = new User();
-
         if (mFirebaseUser == null) {
             // Not signed in, launch the Sign In activity
             startActivity(new Intent(this, SignInActivity.class));
@@ -115,21 +105,11 @@ public class ProfileActivity extends AppCompatActivity
             });
         }
 
-
-
-        // Initialize Google API
-        mGoogleApiClient = new GoogleApiClient.Builder(this).
-                enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */).
-                addApi(Auth.GOOGLE_SIGN_IN_API).
-                addApi(AppInvite.API).
-                build();
-
         actionBar = getSupportActionBar();
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         ImageView profile_pic = (ImageView) findViewById(R.id.profile_pic);
-        Glide.with(this).load(mPhotoUrl).into(profile_pic);
+        Glide.with(this).load(pUser.photoUrl).into(profile_pic);
 
         drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
 
@@ -173,10 +153,10 @@ public class ProfileActivity extends AppCompatActivity
         bundle.putString("username", mUser.username);
         bundle.putString("bandname", mUser.bandname);
 
-        AboutTabFragment  aboutTabFragment  = new  AboutTabFragment();
-        GenreTabFragment  genreTabFragment  = new  GenreTabFragment();
-        MusicTabFragment  musicTabFragment  = new  MusicTabFragment();
-        GigsTabFragment   gigsTabFragment   = new   GigsTabFragment();
+        AboutTabFragment   aboutTabFragment = new  AboutTabFragment();
+        GenreTabFragment   genreTabFragment = new  GenreTabFragment();
+        MusicTabFragment   musicTabFragment = new  MusicTabFragment();
+        GigsTabFragment     gigsTabFragment = new   GigsTabFragment();
         PhotosTabFragment photosTabFragment = new PhotosTabFragment();
 
         gigsTabFragment.setArguments(bundle);
@@ -252,7 +232,7 @@ public class ProfileActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_profile, menu);
         return true;
     }
 
@@ -280,12 +260,7 @@ public class ProfileActivity extends AppCompatActivity
                 return true;
 
             case android.R.id.home:
-                if (drawerLayout.isDrawerOpen(GravityCompat.START)){
-                    drawerLayout.closeDrawer(GravityCompat.START);
-                } else {
-                    drawerLayout.openDrawer(GravityCompat.START);
-                }
-
+                finish();
                 return true;
 
             default:
