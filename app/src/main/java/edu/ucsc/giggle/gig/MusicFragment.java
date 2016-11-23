@@ -31,13 +31,14 @@ public class MusicFragment extends Fragment {
 
     FirebaseRecyclerAdapter<MusicData, MusicViewHolder> mAdapter;
 
+    Uri songURI = null;
     MediaPlayer mp;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.coordinator_layout, container, false);
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("profile_page");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("SongList");
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         recyclerView.setHasFixedSize(true);
@@ -51,10 +52,10 @@ public class MusicFragment extends Fragment {
 
             @Override
             protected void populateViewHolder(MusicViewHolder viewHolder, MusicData model, int position) {
+                viewHolder.setSong(getActivity().getApplicationContext(),model.getSong());
+                Uri uri = Uri.parse(model.getSong());
+                Log.v("this", "Music URI: " + uri.toString());
                 Log.v("this", "SONG:" + model.getSong());
-                //Uri myuri = Uri.parse(model.getSong());
-                viewHolder.setSong(model.getSong());
-                //mp = MediaPlayer.create(getActivity().getApplicationContext(), myuri);
 
             }
         };
@@ -76,10 +77,10 @@ public class MusicFragment extends Fragment {
         ) {
             @Override
             protected void populateViewHolder(MusicViewHolder viewHolder, MusicData model, int position) {
+                viewHolder.setSong(getActivity().getApplicationContext(),model.getSong());
+                Uri uri = Uri.parse(model.getSong());
+                Log.v("this", "Music URI: " + uri.toString());
                 Log.v("this", "SONG:" + model.getSong());
-                //Uri myuri = Uri.parse(model.getSong());
-                viewHolder.setSong(model.getSong());
-                //mp = MediaPlayer.create(getActivity().getApplicationContext(), myuri);
             }
         };
 
@@ -100,17 +101,27 @@ public class MusicFragment extends Fragment {
             textView.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
-                                                mediaPlayer.start();
+                                                if (mediaPlayer!=null)
+                                                    mediaPlayer.start();
                                             }
                                         });
-                    cardView = (CardView) itemView.findViewById(R.id.music_list_view);
+            cardView = (CardView) itemView.findViewById(R.id.music_list_view);
+            cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mediaPlayer!=null)
+                        mediaPlayer.start();
+                }
+            });
             mView = itemView;
 
         }
 
-        public void setSong(String song) {
+        public void setSong(Context ctx, String song) {
             Log.v("this", "SONG set:" + song);
+//           Uri uri = Uri.parse(song);
             textView.setText(song);
+            mediaPlayer = MediaPlayer.create(ctx, Uri.parse(song));
 
 
         }

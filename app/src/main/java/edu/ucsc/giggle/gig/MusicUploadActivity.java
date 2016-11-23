@@ -78,7 +78,7 @@ public class MusicUploadActivity extends ListActivity {
         mProgress = new ProgressDialog(this);
 
         mStorage = FirebaseStorage.getInstance().getReference();
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("profile_page");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("SongList");
 
         submitBtn = (Button) findViewById(R.id.submit_btn);
         submitBtn.setOnClickListener(new View.OnClickListener() {
