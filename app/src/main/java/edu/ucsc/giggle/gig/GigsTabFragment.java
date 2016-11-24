@@ -50,7 +50,7 @@ public class GigsTabFragment extends ListFragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Get ListView object from xml
-        final ListView listView = (ListView)rootView.findViewById(R.id.list_gigs);
+        final ListView listView = (ListView)rootView.findViewById(android.R.id.list);
 
         // Create a new Adapter
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
@@ -101,13 +101,12 @@ public class GigsTabFragment extends ListFragment {
         text.setOnFocusChangeListener(new OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus){
                 if (v.getId() == R.id.gig_text && !hasFocus) {
-                    //sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
                     InputMethodManager imm =  (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 }
             }
         });
-        final Button button = (Button)rootView.findViewById(R.id.add_button);
+        final Button button = (Button) rootView.findViewById(R.id.add_button);
 
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -118,6 +117,7 @@ public class GigsTabFragment extends ListFragment {
                 // Set the child's data to the value passed in from the text box.
                 childRef.setValue(text.getText().toString());
 
+                text.setText("");
             }
         });
 
@@ -140,8 +140,7 @@ public class GigsTabFragment extends ListFragment {
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
+                    public void onCancelled(DatabaseError databaseError) {}
                 });
             }
         });

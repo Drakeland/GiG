@@ -38,6 +38,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.appinvite.AppInvite;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -88,6 +89,15 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
         Toolbar toolbar = (Toolbar)findViewById(R.id.mToolbar);
         setSupportActionBar(toolbar);
 
+        // Initialize Google API
+        mGoogleApiClient = new GoogleApiClient.Builder(this).
+                enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */).
+                addApi(Auth.GOOGLE_SIGN_IN_API).
+                addApi(AppInvite.API).
+                build();
+
+        mGoogleApiClient.connect();
+
         mStorage = FirebaseStorage.getInstance().getReference();
 
         imageButton = (ImageButton) findViewById(R.id.photo_name);
@@ -129,7 +139,6 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
             } else {
                 ownProfile = true;
                 mUser.bandname = pUser.bandname;
-
             }
         }
 
@@ -148,7 +157,6 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
         if (viewPager != null) {
             setupViewPager(viewPager);
         }
-
 
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tabLayout);
         tabLayout.setupWithViewPager(viewPager);
@@ -200,36 +208,6 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
         viewPager.setAdapter(adapter);
     }
 
-    private void setupDrawerContent(NavigationView navigationView){
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem menuItem) {
-                menuItem.setChecked(true);
-
-                switch (menuItem.getItemId()) {
-                    case R.id.about_label:
-                        viewPager.setCurrentItem(0);
-                        break;
-                    case R.id.genres_label:
-                        viewPager.setCurrentItem(1);
-                        break;
-                    case R.id.music_label:
-                        viewPager.setCurrentItem(2);
-                        break;
-                    case R.id.gigs_label:
-                        viewPager.setCurrentItem(3);
-                        break;
-                    case R.id.photos_label:
-                        viewPager.setCurrentItem(4);
-                        break;
-                }
-
-                drawerLayout.closeDrawers();
-                return true;
-            }
-        });
-    }
-
     static class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
@@ -277,10 +255,6 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
         switch(item.getItemId()) {
             case R.id.sign_out_menu:
                 mFirebaseAuth.signOut();
@@ -317,8 +291,6 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
-        // be available.
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
@@ -420,9 +392,7 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
                     dialog.cancel();
                 }
             });
-
             alert.show();
-
         }
     }
 

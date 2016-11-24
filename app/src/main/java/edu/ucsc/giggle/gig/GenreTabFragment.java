@@ -51,7 +51,7 @@ public class GenreTabFragment extends ListFragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Get ListView object from xml
-        final ListView listView = (ListView)rootView.findViewById(R.id.list_genres);
+        final ListView listView = (ListView)rootView.findViewById(android.R.id.list);
 
         // Create a new Adapter
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
@@ -102,7 +102,6 @@ public class GenreTabFragment extends ListFragment {
         text.setOnFocusChangeListener(new OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus){
                 if (v.getId() == R.id.genreText && !hasFocus) {
-                    //sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
                     InputMethodManager imm =  (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 }
@@ -112,13 +111,11 @@ public class GenreTabFragment extends ListFragment {
 
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
                 // Create a new child with a auto-generated ID.
                 DatabaseReference childRef = genreRef.push();
-
                 // Set the child's data to the value passed in from the text box.
                 childRef.setValue(text.getText().toString());
-
+                text.setText("");
             }
         });
 
@@ -143,13 +140,10 @@ public class GenreTabFragment extends ListFragment {
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                     }
-                })
-                ;}
-        })
-        ;}
-
-
-
+                });
+            }
+        });
+    }
 
     private void setupRecyclerView(RecyclerView recyclerView){
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
@@ -170,7 +164,6 @@ public class GenreTabFragment extends ListFragment {
                 mView = view;
                 mTextView = (TextView) view.findViewById(android.R.id.text1);
             }
-
         }
 
         public String getValueAt(int position) {
@@ -184,8 +177,7 @@ public class GenreTabFragment extends ListFragment {
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(android.R.layout.simple_list_item_1, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
             return new ViewHolder(view);
         }
 

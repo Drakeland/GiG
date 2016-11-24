@@ -64,7 +64,7 @@ public class MusicUploadActivity extends ListActivity {
         songListFile = findSongs(new File(SD_PATH));
         Log.v(TAG, "PATH: " + SD_PATH);
 
-        listView = (ListView) findViewById(R.id.list_music);
+        listView = (ListView) findViewById(android.R.id.list);
         mProgress = new ProgressDialog(this);
 
         mUser = new User(getIntent().getExtras());
@@ -85,7 +85,6 @@ public class MusicUploadActivity extends ListActivity {
         for (int i = 0; i < songListFile.size(); i++){
             items[i] = songListFile.get(i).getName().toString();
         }
-
     }
 
     private void startUpload() {

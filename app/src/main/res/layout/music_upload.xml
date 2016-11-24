@@ -12,11 +12,10 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <ListView
-        android:id="@+id/list_music"
+        android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="400dp">
     </ListView>
-
 
     <Button
         android:text="@string/upload_song"

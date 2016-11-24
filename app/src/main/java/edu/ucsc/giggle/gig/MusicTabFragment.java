@@ -22,13 +22,10 @@ public class MusicTabFragment extends Fragment {
     static final String TAG = "MusicTabFragment";
     RecyclerView recyclerView;
     DatabaseReference mDatabase;
-
     FirebaseRecyclerAdapter<MusicData, MusicViewHolder> mAdapter;
-
     Uri songURI = null;
-    MediaPlayer mp;
+    MediaPlayer mediaPlayer;
     User mUser;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -39,9 +36,7 @@ public class MusicTabFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
 
         mUser = new User(getArguments());
-
         mDatabase = FirebaseDatabase.getInstance().getReference("Music").child(mUser.username);
-
         mAdapter = new FirebaseRecyclerAdapter<MusicData, MusicViewHolder>(
                 MusicData.class,
                 R.layout.item_music,
@@ -62,7 +57,6 @@ public class MusicTabFragment extends Fragment {
         return rootView;
     }
 
-
     @Override
     public void onStart() {
         super.onStart();
@@ -82,7 +76,6 @@ public class MusicTabFragment extends Fragment {
         };
 
         recyclerView.setAdapter(firebaseRecyclerAdapter);
-
     }
 
 
@@ -111,17 +104,12 @@ public class MusicTabFragment extends Fragment {
                 }
             });
             mView = itemView;
-
         }
 
         public void setSong(Context ctx, String song) {
             Log.v(TAG, "SONG set:" + song);
             textView.setText(song);
             mediaPlayer = MediaPlayer.create(ctx, Uri.parse(song));
-
-
         }
-
-
     }
 }
