@@ -35,10 +35,7 @@ public class SignInActivity extends AppCompatActivity implements
     private static final int RC_SIGN_IN = 9001;
 
     private SignInButton mSignInButton;
-
     private GoogleApiClient mGoogleApiClient;
-
-    // Firebase instance variables
     private FirebaseAuth mFirebaseAuth;
 
     @Override
@@ -59,10 +56,10 @@ public class SignInActivity extends AppCompatActivity implements
                 .build();
         // ATTENTION: This "addApi(AppIndex.API)"was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .addApi(AppIndex.API).build();
+        mGoogleApiClient = new GoogleApiClient.Builder(this).
+                enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */).
+                addApi(Auth.GOOGLE_SIGN_IN_API, gso).
+                addApi(AppIndex.API).build();
 
         // Initialize FirebaseAuth
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -103,8 +100,8 @@ public class SignInActivity extends AppCompatActivity implements
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        mFirebaseAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+        mFirebaseAuth.signInWithCredential(credential).
+                addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
@@ -138,15 +135,15 @@ public class SignInActivity extends AppCompatActivity implements
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     public Action getIndexApiAction() {
-        Thing object = new Thing.Builder()
-                .setName("SignIn Page") // TODO: Define a title for the content shown.
+        Thing object = new Thing.Builder().
+                setName("SignIn Page"). // TODO: Define a title for the content shown.
                 // TODO: Make sure this auto-generated URL is correct.
-                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
-                .build();
-        return new Action.Builder(Action.TYPE_VIEW)
-                .setObject(object)
-                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
-                .build();
+                setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]")).
+                build();
+        return new Action.Builder(Action.TYPE_VIEW).
+                setObject(object).
+                setActionStatus(Action.STATUS_TYPE_COMPLETED).
+                build();
     }
 
     @Override

@@ -97,13 +97,8 @@ public class MusicUploadActivity extends ListActivity {
         items = new String[songListFile.size()];
 
         for (int i = 0; i < songListFile.size(); i++){
-            //toast(songListFile.get(i).getName().toString());
             items[i] = songListFile.get(i).getName().toString();
         }
-
-//        ArrayAdapter<String> adp = new ArrayAdapter<String>(getApplicationContext(),R.layout.song_item, items);
-//        lv.setAdapter(adp);
-
     }
 
     private void startUpload() {
@@ -159,7 +154,7 @@ public class MusicUploadActivity extends ListActivity {
             for(File file : home.listFiles(new Mp3Filter())){
                 songs.add(file.getName());
             }
-            ArrayAdapter<String> songList = new ArrayAdapter<String>(this, R.layout.song_item,songs);
+            ArrayAdapter<String> songList = new ArrayAdapter<String>(this, R.layout.item_song,songs);
             setListAdapter(songList);
         }
     }

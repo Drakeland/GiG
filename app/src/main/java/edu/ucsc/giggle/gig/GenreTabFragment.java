@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.hardware.SensorManager;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,27 +27,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-//import android.support.v4.app.FragmentActivity;
-
-/**
- * Created by JanJan on 10/10/                          2016.
- */
-
 public class GenreTabFragment extends ListFragment {
+    static final String TAG = "GenreTabFragment";
     RecyclerView recyclerView;
     View rootView;
-    static final String TAG = "GenreTabFragment";
     User mUser;
-    // ListView listView;
-    //ListViewCompat listView;
-    //static ListView listView;
-    //static View rootView;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 
-        rootView = inflater.inflate(R.layout.genrefrag_layout, container, false);
+        rootView = inflater.inflate(R.layout.fragment_genres, container, false);
         recyclerView = (RecyclerView)rootView.findViewById(R.id.recyclerView);
         setupRecyclerView(recyclerView);
 
@@ -60,15 +49,6 @@ public class GenreTabFragment extends ListFragment {
     @Override
     public void onViewCreated( View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //public void onCreate(  Bundle savedInstanceState) {
-        //  super.onCreate(savedInstanceState);
-//        View rootView = inflater.inflate(R.layout.coordinator_layout, container, false);
-//        recyclerView = (RecyclerView)rootView.findViewById(R.id.recyclerView);
-//        setupRecyclerView(recyclerView);
-
-//
-
-
 
         // Get ListView object from xml
         final ListView listView = (ListView)rootView.findViewById(android.R.id.list);
@@ -171,13 +151,8 @@ public class GenreTabFragment extends ListFragment {
 
 
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
     private void setupRecyclerView(RecyclerView recyclerView){
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
-        //recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(getActivity(), GigsTabModel.data));
-        //edit = (EditText) recyclerView.findViewById(R.id.GigsEditText);
-        //SharedPreferences settings = this.getActivity().getSharedPreferences("PREFS", 0);
-        //e dit.setText(settings.getString("value",""));
     }
 
     public static class SimpleStringRecyclerViewAdapter extends RecyclerView.Adapter<SimpleStringRecyclerViewAdapter.ViewHolder>{
@@ -189,7 +164,6 @@ public class GenreTabFragment extends ListFragment {
 
             public final View mView;
             public final TextView mTextView;
-            //public final EditText eText = (EditText) recyclerView.findViewById(R.id.GigsEditText);
 
             public ViewHolder(View view) {
                 super(view);

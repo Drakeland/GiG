@@ -37,7 +37,7 @@ public class PhotosTabFragment extends Fragment {
 
         mUser = new User(getArguments());
 
-        View rootView = inflater.inflate(R.layout.photosfrag_layout, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_photos, container, false);
         // Connect to the Firebase database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
@@ -50,7 +50,7 @@ public class PhotosTabFragment extends Fragment {
 
         mAdapter = new FirebaseRecyclerAdapter<PhotoData, PhotoViewHolder>(
                 PhotoData.class,
-                R.layout.photorecycler_item,
+                R.layout.item_photo_recycler,
                 PhotoViewHolder.class,
                 mDatabase){
             @Override
@@ -70,7 +70,7 @@ public class PhotosTabFragment extends Fragment {
         super.onStart();
         FirebaseRecyclerAdapter<PhotoData,PhotoViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<PhotoData, PhotoViewHolder>(
                 PhotoData.class,
-                R.layout.photorecycler_item,
+                R.layout.item_photo_recycler,
                 PhotoViewHolder.class,
                 mDatabase
         ){

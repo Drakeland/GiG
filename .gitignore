@@ -8,3 +8,11 @@ app/.idea/workspace.xml
 *.bin
 
 *.lock
+
+*.lock
+
+*.bin
+
+*.iml
+
+*.properties

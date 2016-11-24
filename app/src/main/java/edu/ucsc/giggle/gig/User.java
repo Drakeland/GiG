@@ -25,10 +25,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-/**
- * Created by drake on 11/16/16.
- */
-
 public class User {
     private final String TAG = "User";
     private static final String  USERS_TABLE = "users";
