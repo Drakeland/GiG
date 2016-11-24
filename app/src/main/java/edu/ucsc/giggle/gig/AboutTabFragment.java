@@ -27,12 +27,13 @@ import com.google.firebase.database.FirebaseDatabase;
  * Created by JanJan on 10/10/2016.
  */
 public class AboutTabFragment extends Fragment {
+    static final String TAG = "AboutTabFragment";
     RecyclerView recyclerView;
     View rootView;
     EditText editText;
     User mUser;
-    //TextView textView;
     DatabaseReference aboutRef;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         rootView = inflater.inflate(R.layout.fragment_about, container, false);
@@ -43,9 +44,9 @@ public class AboutTabFragment extends Fragment {
 
         return rootView;
     }
+
     public void onViewCreated( View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
 
         // Create a new Adapter
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),

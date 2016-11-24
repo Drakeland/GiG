@@ -16,4 +16,7 @@
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
     <string name="my_profile">My Profile</string>
+    <string name="upload_music">Upload music</string>
+    <string name="gig">GiG</string>
+    <string name="upload_photo">Upload photo</string>
 </resources>

@@ -1,7 +1,10 @@
 package edu.ucsc.giggle.gig;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +33,7 @@ import java.util.List;
 import android.support.design.widget.CoordinatorLayout;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -37,11 +41,17 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 public class ProfileActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "ProfileActivity";
@@ -52,7 +62,15 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
     private DrawerLayout drawerLayout;
     private String mUsername;
     private String mPhotoUrl;
+    private Uri PhotoURI;
+    private ProgressDialog progressDialog;
+    private ImageButton imageButton;
     private GoogleApiClient mGoogleApiClient;
+
+    private DatabaseReference mDatabase;
+    private StorageReference mStorage;
+
+    private static final int RESULT_LOAD_IMG = 1;
 
     // Firebase instance variables
     private FirebaseAuth mFirebaseAuth;
@@ -69,6 +87,12 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
 
         Toolbar toolbar = (Toolbar)findViewById(R.id.mToolbar);
         setSupportActionBar(toolbar);
+
+
+        mStorage = FirebaseStorage.getInstance().getReference();
+
+        imageButton = (ImageButton) findViewById(R.id.photo_name);
+        progressDialog = new ProgressDialog(this);
 
         pUser = new User(getIntent().getExtras());
 
@@ -111,6 +135,8 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
             }
         }
 
+        mDatabase = FirebaseDatabase.getInstance().getReference("photos").child(mUser.username);
+
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(pUser.bandname);
@@ -119,11 +145,6 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
         Glide.with(this).load(pUser.photoUrl).into(profile_pic);
 
         drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
-
-        NavigationView navView = (NavigationView) findViewById(R.id.navigation_view);
-        if (navView != null){
-            setupDrawerContent(navView);
-        }
 
         viewPager = (ViewPager)findViewById(R.id.tab_viewpager);
         if (viewPager != null){
@@ -247,7 +268,11 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
         getMenuInflater().inflate(R.menu.menu_profile, menu);
 
         // only allow profile editing if the user is viewing their own profile
-        if (!ownProfile) menu.removeItem(R.id.edit_profile_menu);
+        if (!ownProfile) {
+            menu.removeItem(R.id.edit_profile_menu);
+            menu.removeItem(R.id.upload_music_menu);
+            menu.removeItem(R.id.upload_photo_menu);
+        }
 
         return true;
     }
@@ -264,12 +289,20 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                 mUser = null;
                 startActivity(new Intent(this, SignInActivity.class));
-
                 return true;
 
             case R.id.edit_profile_menu:
                 showEditProfileDialog();
+                return true;
 
+            case R.id.upload_music_menu:
+                Intent intent = new Intent(ProfileActivity.this, MusicUploadActivity.class);
+                intent.putExtras(mUser.bundle());
+                startActivity(intent);
+                return true;
+
+            case R.id.upload_photo_menu:
+                showUploadProfileDialog();
                 return true;
 
             case R.id.action_settings:
@@ -322,6 +355,87 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
         });
 
         alert.show();
+    }
+    private void showUploadProfileDialog() {
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        View inflater = layoutInflater.inflate(R.layout.dialog_upload_profile, null);
+        imageButton = (ImageButton) inflater.findViewById(R.id.photo_name);
+        final Dialog dialog = new Dialog(this);
+
+
+        dialog.setTitle("Upload Photo");
+        dialog.setContentView(inflater);
+
+
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                // Create intent to Open Image applications like Gallery, Google Photos
+                Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                // Start the Intent
+                startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
+
+
+            }
+
+        });
+        dialog.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode,resultCode,data);
+        if(requestCode == RESULT_LOAD_IMG && resultCode == RESULT_OK){
+            LayoutInflater layoutInflater = LayoutInflater.from(getApplicationContext());
+            View inflater = layoutInflater.inflate(R.layout.dialog_upload_profile, null);
+            imageButton = (ImageButton) inflater.findViewById(R.id.photo_name);
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            PhotoURI = data.getData();
+            Log.v("this", "PhotoURI:" + PhotoURI.toString());
+            imageButton.setImageURI(PhotoURI);
+
+            alert.setTitle("Upload Photo");
+            alert.setIcon(R.drawable.ic_mode_edit_black);
+            alert.setView(inflater);
+
+
+
+            alert.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton)
+                {
+                    progressDialog.setMessage("Uploading...");
+                    progressDialog.show();
+                    StorageReference filepath = mStorage.child("Photos").child(PhotoURI.getLastPathSegment());
+
+                    filepath.putFile(PhotoURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
+
+                            DatabaseReference newPage = mDatabase.push();
+                            newPage.child("Photos").setValue(downloadUrl.toString());
+
+                            progressDialog.dismiss();
+
+                        }
+                    });
+
+                    dialog.dismiss();
+                }
+            });
+
+            alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    dialog.cancel();
+                }
+            });
+
+            alert.show();
+
+        }
     }
 
 }

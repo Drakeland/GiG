@@ -1,82 +1,127 @@
 package edu.ucsc.giggle.gig;
 
 import android.content.Context;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-/**
- * Created by JanJan on 10/10/2016.
- */
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class MusicTabFragment extends Fragment {
+    static final String TAG = "MusicTabFragment";
     RecyclerView recyclerView;
+    DatabaseReference mDatabase;
+
+    FirebaseRecyclerAdapter<MusicData, MusicViewHolder> mAdapter;
+
+    Uri songURI = null;
+    MediaPlayer mp;
+    User mUser;
+
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_music, container, false);
-        recyclerView = (RecyclerView)rootView.findViewById(R.id.recyclerView);
-        setupRecyclerView(recyclerView);
+
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
+        recyclerView.setHasFixedSize(true);
+
+        mUser = new User(getArguments());
+
+        mDatabase = FirebaseDatabase.getInstance().getReference("Music").child(mUser.username);
+
+        mAdapter = new FirebaseRecyclerAdapter<MusicData, MusicViewHolder>(
+                MusicData.class,
+                R.layout.item_music,
+                MusicViewHolder.class,
+                mDatabase
+        ) {
+            @Override
+            protected void populateViewHolder(MusicViewHolder viewHolder, MusicData model, int position) {
+                viewHolder.setSong(getActivity().getApplicationContext(),model.getSong());
+                Uri uri = Uri.parse(model.getSong());
+                Log.v(TAG, "Music URI: " + uri.toString());
+                Log.v(TAG, "SONG:" + model.getSong());
+            }
+        };
+
+        recyclerView.setAdapter(mAdapter);
+
         return rootView;
     }
 
-    private void setupRecyclerView(RecyclerView recyclerView){
-        recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
-        recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(getActivity(), MusicTabModel.data));
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        FirebaseRecyclerAdapter<MusicData, MusicViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<MusicData, MusicViewHolder>(
+                MusicData.class,
+                R.layout.item_music,
+                MusicViewHolder.class,
+                mDatabase
+        ) {
+            @Override
+            protected void populateViewHolder(MusicViewHolder viewHolder, MusicData model, int position) {
+                viewHolder.setSong(getActivity().getApplicationContext(),model.getSong());
+                Uri uri = Uri.parse(model.getSong());
+                Log.v(TAG, "Music URI: " + uri.toString());
+                Log.v(TAG, "SONG:" + model.getSong());
+            }
+        };
+
+        recyclerView.setAdapter(firebaseRecyclerAdapter);
+
     }
 
-    public static class SimpleStringRecyclerViewAdapter extends RecyclerView.Adapter<SimpleStringRecyclerViewAdapter.ViewHolder>{
-        private String[] mValues;
-        private Context mContext;
 
-        public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class MusicViewHolder extends RecyclerView.ViewHolder {
+        View mView;
+        CardView cardView;
+        TextView textView;
+        MediaPlayer mediaPlayer;
 
-            public final View mView;
-            public final TextView mTextView;
-
-            public ViewHolder(View view) {
-                super(view);
-                mView = view;
-                mTextView = (TextView) view.findViewById(android.R.id.text1);
-            }
-
-        }
-
-        public String getValueAt(int position) {
-            return mValues[position];
-        }
-
-        public SimpleStringRecyclerViewAdapter(Context context, String[] items) {
-            mContext = context;
-            mValues = items;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(android.R.layout.simple_list_item_1, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(final ViewHolder holder, final int position) {
-            holder.mTextView.setText(mValues[position]);
-            holder.mView.setOnClickListener(new View.OnClickListener() {
+        public MusicViewHolder(View itemView) {
+            super(itemView);
+            textView = (TextView) itemView.findViewById(R.id.music_name);
+            textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Snackbar.make(v, getValueAt(position), Snackbar.LENGTH_SHORT).show();
+                    if (mediaPlayer!=null)
+                        mediaPlayer.start();
                 }
             });
+            cardView = (CardView) itemView.findViewById(R.id.music_list_view);
+            cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mediaPlayer!=null)
+                        mediaPlayer.start();
+                }
+            });
+            mView = itemView;
+
         }
 
-        @Override
-        public int getItemCount() {
-            return mValues.length;
+        public void setSong(Context ctx, String song) {
+            Log.v(TAG, "SONG set:" + song);
+            textView.setText(song);
+            mediaPlayer = MediaPlayer.create(ctx, Uri.parse(song));
+
+
         }
+
+
     }
 }

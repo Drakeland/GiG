@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -24,8 +23,6 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOError;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +31,7 @@ import java.util.List;
  */
 
 
-class Mp3Filter implements FilenameFilter {
+class Mp3Filter implements FilenameFilter{
     public boolean accept(File dir, String name){
         return (name.endsWith(".mp3"));
     }
@@ -42,29 +39,20 @@ class Mp3Filter implements FilenameFilter {
 
 public class MusicUploadActivity extends ListActivity {
 
-    private String SD_PATH = Environment.getExternalStorageDirectory().getPath();
+    private static final String TAG = "MusicUploadActivity";
+    private String SD_PATH = Environment.getExternalStorageDirectory() + "/Music/";
     private List<String> songs = new ArrayList<String>();
     private TextView musicFile;
     private Button submitBtn;
-
-    ListView lv;
-
+    private ListView listView;
     private Uri musicURI = null;
-
     private StorageReference mStorage;
-
     private DatabaseReference mDatabase;
-
     private ProgressDialog mProgress;
-
     ArrayList<File> songListFile;
-
-    private static final String LOG_TAG = "Music_log";
 
     String[] items;
     User mUser;
-
-
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -74,14 +62,13 @@ public class MusicUploadActivity extends ListActivity {
         updatePlaylist();
 
         songListFile = findSongs(new File(SD_PATH));
+        Log.v(TAG, "PATH: " + SD_PATH);
 
-        lv = (ListView) findViewById(android.R.id.list);
+
+        listView = (ListView) findViewById(android.R.id.list);
         mProgress = new ProgressDialog(this);
 
-       // Bundle bundle = getArguments();
-        Intent intent = getIntent();
-        mUser = new User(intent.getStringExtra("username"),
-               intent.getStringExtra("bandname"));
+        mUser = new User(getIntent().getExtras());
 
         mStorage = FirebaseStorage.getInstance().getReference();
         mDatabase = FirebaseDatabase.getInstance().getReference("Music").child(mUser.username);
@@ -99,6 +86,7 @@ public class MusicUploadActivity extends ListActivity {
         for (int i = 0; i < songListFile.size(); i++){
             items[i] = songListFile.get(i).getName().toString();
         }
+
     }
 
     private void startUpload() {
@@ -112,8 +100,9 @@ public class MusicUploadActivity extends ListActivity {
                 DatabaseReference newPage = mDatabase.push();
                 newPage.child("Song").setValue(downloadURI.toString());
                 mProgress.dismiss();
-
-                startActivity(new Intent(MusicUploadActivity.this,ProfileActivity.class));
+                Intent intent = new Intent(MusicUploadActivity.this,ProfileActivity.class);
+                intent.putExtras(mUser.bundle());
+                startActivity(intent);
             }
         });
     }
@@ -126,15 +115,12 @@ public class MusicUploadActivity extends ListActivity {
         ArrayList<File> a1 = new ArrayList<File>();
         File[] files = root.listFiles();
         for (File singleFile : files){
-            if(singleFile.isDirectory() && !singleFile.isHidden()){
+            if (singleFile.isDirectory() && !singleFile.isHidden()) {
                 a1.addAll(findSongs(singleFile));
-
-            }
-            else{
+            } else {
                 if(singleFile.getName().endsWith("mp3")){
                     a1.add(singleFile);
                 }
-
             }
         }
         return a1;
@@ -144,17 +130,17 @@ public class MusicUploadActivity extends ListActivity {
     public void onListItemClick(ListView list, View view, int position, long id){
         musicFile.setText(getListAdapter().getItem(position).toString());
         musicURI = Uri.fromFile(new File(songListFile.get(position).toURI()));
-        Log.v("this", "SONG URI: " + musicURI.toString());
+        Log.v(TAG, "SONG URI: " + musicURI.toString());
     }
 
     private void updatePlaylist() {
         File home = new File(SD_PATH);
-        Log.v("this","SD_PATH:" + SD_PATH);
-        if(home.listFiles(new Mp3Filter()).length > 0){
-            for(File file : home.listFiles(new Mp3Filter())){
+        Log.v(TAG, "SD_PATH:" + home.toString());
+        if (home.listFiles(new Mp3Filter()).length > 0) {
+            for (File file : home.listFiles(new Mp3Filter())) {
                 songs.add(file.getName());
             }
-            ArrayAdapter<String> songList = new ArrayAdapter<String>(this, R.layout.item_song,songs);
+            ArrayAdapter<String> songList = new ArrayAdapter<String>(this, R.layout.item_song, songs);
             setListAdapter(songList);
         }
     }

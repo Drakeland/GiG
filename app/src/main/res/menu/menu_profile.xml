@@ -7,6 +7,14 @@
         android:icon="@drawable/ic_mode_edit_white"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/upload_photo_menu"
+        android:title="@string/upload_photo"
+        android:icon="@drawable/ic_insert_photo"
+        app:showAsAction="always"/>
+    <item android:id="@+id/upload_music_menu"
+        android:title="@string/upload_music"
+        app:showAsAction="never"/>
+    <item
         android:id="@+id/sign_out_menu"
         android:title="@string/sign_out"
         app:showAsAction="never" />
