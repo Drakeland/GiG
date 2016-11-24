@@ -277,9 +277,6 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
                 showUploadProfileDialog();
                 return true;
 
-            case R.id.action_settings:
-                return true;
-
             case android.R.id.home:
                 finish();
                 return true;
