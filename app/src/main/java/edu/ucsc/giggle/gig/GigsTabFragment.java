@@ -52,9 +52,7 @@ public class GigsTabFragment extends ListFragment {
         recyclerView = (RecyclerView)rootView.findViewById(R.id.recyclerView);
         setupRecyclerView(recyclerView);
 
-        Bundle bundle = getArguments();
-        mUser = new User(bundle.getString("username"),
-                         bundle.getString("bandname"));
+        mUser = new User(getArguments());
 
         return rootView;
     }
@@ -120,10 +118,10 @@ public class GigsTabFragment extends ListFragment {
         });
 
         // Add items via the Button and EditText at the bottom of the window.
-        final EditText text = (EditText)rootView.findViewById(R.id.todoText);
+        final EditText text = (EditText) rootView.findViewById(R.id.GiGText);
         text.setOnFocusChangeListener(new OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus){
-                if (v.getId() == R.id.todoText && !hasFocus) {
+                if (v.getId() == R.id.GiGText && !hasFocus) {
                     //sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
                     InputMethodManager imm =  (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);

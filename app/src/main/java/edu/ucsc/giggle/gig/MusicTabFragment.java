@@ -27,8 +27,7 @@ public class MusicTabFragment extends Fragment {
 
     private void setupRecyclerView(RecyclerView recyclerView){
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
-        recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(getActivity(),
-                MusicTabModel.data));
+        recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(getActivity(), MusicTabModel.data));
     }
 
     public static class SimpleStringRecyclerViewAdapter extends RecyclerView.Adapter<SimpleStringRecyclerViewAdapter.ViewHolder>{

@@ -2,33 +2,145 @@ package edu.ucsc.giggle.gig;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
+import android.util.Log;
+import android.view.inputmethod.InputMethodManager;
+import android.view.View.OnFocusChangeListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.hardware.SensorManager;
+import android.widget.EditText;
+
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * Created by JanJan on 10/10/2016.
  */
 public class AboutTabFragment extends Fragment {
     RecyclerView recyclerView;
-
+    View rootView;
+    EditText editText;
+    User mUser;
+    //TextView textView;
+    DatabaseReference aboutRef;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        View rootView = inflater.inflate(R.layout.aboutfrag_layout, container, false);
+        rootView = inflater.inflate(R.layout.aboutfrag_layout, container, false);
         recyclerView = (RecyclerView)rootView.findViewById(R.id.recyclerView);
         setupRecyclerView(recyclerView);
+
+        mUser = new User(getArguments());
+
         return rootView;
+    }
+    public void onViewCreated( View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+
+        // Create a new Adapter
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_list_item_1, android.R.id.text1);
+        // Connect to the Firebase database
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        // Get a reference to the todoItems child items it the database
+        final DatabaseReference aboutRef = database.getReference("about").child(mUser.username);
+
+        // Assign a listener to detect changes to the child items
+        // of the database reference.
+        aboutRef.addChildEventListener(new ChildEventListener(){
+
+            // This function is called once for each child that exists
+            // when the listener is added. Then it is called
+            // each time a new child is added.
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                String value = dataSnapshot.getValue(String.class);
+                //adapter.add(value);
+                editText.setText("");
+                editText.setText(value);
+            }
+
+            // This function is called each time a child item is removed.
+            public void onChildRemoved(DataSnapshot dataSnapshot){
+                String value = dataSnapshot.getValue(String.class);
+                adapter.remove(value);
+                //Log.d(TAG, "****************************************************************delete");
+            }
+
+            // The following functions are also required in ChildEventListener implementations.
+            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName){}
+            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName){}
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w("TAG:", "Failed to read value.", error.toException());
+            }
+        });
+
+        editText = (EditText)rootView.findViewById(R.id.edit_text);
+        //textView = (TextView)rootView.findViewById(R.id.text_view);
+
+        OnFocusChangeListener ofcListener = new AboutTabFragment.MyFocusChangeListener();
+        editText.setOnFocusChangeListener(ofcListener);
+
+
+
+        final Button saveButton = (Button)rootView.findViewById(R.id.saveButton);
+        final Button editButton = (Button)rootView.findViewById(R.id.editButton);
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                // Create a new child with a auto-generated ID.
+                aboutRef.getRef().removeValue();
+                DatabaseReference childRef = aboutRef.push();
+
+                // Set the child's data to the value passed in from the text box.
+                childRef.setValue(editText.getText().toString());
+
+                String result = editText.getText().toString();
+                editText.setEnabled(false);
+
+
+            }
+        });
+        editButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                editText.setEnabled(true);
+            }
+        });
+
+
     }
 
     private void setupRecyclerView(RecyclerView recyclerView){
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
-        recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(getActivity(),
-                AboutTabModel.data));
+        //recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(getActivity(),
+        //        AboutTabModel.data));
     }
 
     public static class SimpleStringRecyclerViewAdapter extends RecyclerView.Adapter<SimpleStringRecyclerViewAdapter.ViewHolder>{
@@ -78,6 +190,25 @@ public class AboutTabFragment extends Fragment {
         @Override
         public int getItemCount() {
             return mValues.length;
+        }
+    }
+    private class MyFocusChangeListener implements OnFocusChangeListener {
+
+        public void onFocusChange(View v, boolean hasFocus){
+
+            if(v.getId() == R.id.edit_text && !hasFocus) {
+                //sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+                InputMethodManager imm =  (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
+                // Create a new child with a auto-generated ID.
+                // Set the child's data to the value passed in from the text box.
+                //childRef.setValue(editText.getText().toString());
+                //String result = editText.getText().toString();
+                //editText.setText( result, TextView.BufferType.EDITABLE);
+
+
+            }
         }
     }
 }
