@@ -27,12 +27,12 @@ import java.util.Map;
 
 public class User {
     private final String TAG = "User";
-    private static final String  USERS_TABLE = "users";
-    private static final String  ABOUT_TABLE = "about";
-    private static final String GENRES_TABLE = "genres";
-    private static final String  MUSIC_TABLE = "music";
-    private static final String   GIGS_TABLE = "gigs";
-    private static final String PHOTOS_TABLE = "photos";
+    public static final String  USERS_TABLE = "users";
+    public static final String  ABOUT_TABLE = "about";
+    public static final String GENRES_TABLE = "genres";
+    public static final String  MUSIC_TABLE = "music";
+    public static final String   GIGS_TABLE = "gigs";
+    public static final String PHOTOS_TABLE = "photos";
 
     // Fields
     public String username;     // As in the email <username@gmail.com> from Google sign-in

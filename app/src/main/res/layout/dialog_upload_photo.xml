@@ -16,4 +16,10 @@
         android:adjustViewBounds="true"
         android:src="@drawable/ic_insert_photo" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/upload_photo"
+        android:textSize="20dp"/>
+
 </LinearLayout>

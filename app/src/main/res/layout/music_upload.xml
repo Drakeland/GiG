@@ -5,20 +5,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <ListView android:id="@id/android:list"
+    <ListView
+        android:id="@+id/list_music"
         android:layout_width="match_parent"
         android:layout_height="400dp">
     </ListView>
 
 
     <Button
-        android:text="Submit Music"
+        android:text="@string/upload_song"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/submit_btn"
@@ -28,16 +29,15 @@
         android:layout_centerHorizontal="true" />
 
     <TextView
-        android:text="TextView"
+        android:text=""
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/selected_music"
-        android:layout_marginBottom="20dp"
         android:background="@drawable/input_outline"
         android:layout_above="@+id/submit_btn"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp" />
+        android:textSize="20sp"
+        android:layout_margin="6dp"
+        android:padding="3dp"/>
 </RelativeLayout>

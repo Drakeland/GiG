@@ -64,8 +64,7 @@ public class MusicUploadActivity extends ListActivity {
         songListFile = findSongs(new File(SD_PATH));
         Log.v(TAG, "PATH: " + SD_PATH);
 
-
-        listView = (ListView) findViewById(android.R.id.list);
+        listView = (ListView) findViewById(R.id.list_music);
         mProgress = new ProgressDialog(this);
 
         mUser = new User(getIntent().getExtras());
@@ -112,20 +111,19 @@ public class MusicUploadActivity extends ListActivity {
     }
 
     public ArrayList<File> findSongs(File root) {
-        ArrayList<File> a1 = new ArrayList<File>();
+        ArrayList<File> arrayList = new ArrayList<File>();
         File[] files = root.listFiles();
         for (File singleFile : files){
             if (singleFile.isDirectory() && !singleFile.isHidden()) {
-                a1.addAll(findSongs(singleFile));
+                arrayList.addAll(findSongs(singleFile));
             } else {
                 if(singleFile.getName().endsWith("mp3")){
-                    a1.add(singleFile);
+                    arrayList.add(singleFile);
                 }
             }
         }
-        return a1;
+        return arrayList;
     }
-
 
     public void onListItemClick(ListView list, View view, int position, long id){
         musicFile.setText(getListAdapter().getItem(position).toString());

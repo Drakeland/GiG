@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
@@ -17,19 +17,18 @@
         android:orientation="vertical"
         android:layout_gravity="bottom">
         <Button
-            android:id="@+id/addButton"
+            android:id="@+id/add_button"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Add Upcoming GiG"/>
+            android:text="@string/add_upcoming_gig"/>
         <EditText
-            android:id="@+id/GiGText"
+            android:id="@+id/gig_text"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:imeOptions="actionDone"
-            android:inputType="text"
-            />
+            android:inputType="text"/>
         <ListView
-            android:id= "@android:id/list"
+            android:id= "@+id/list_gigs"
             android:layout_width = "match_parent"
             android:layout_height = "match_parent"/>
 

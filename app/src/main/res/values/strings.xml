@@ -19,4 +19,9 @@
     <string name="upload_music">Upload music</string>
     <string name="gig">GiG</string>
     <string name="upload_photo">Upload photo</string>
+    <string name="song_title">Song title</string>
+    <string name="upload_song">Upload Song</string>
+    <string name="add_upcoming_gig">Add Upcoming GiG</string>
+    <string name="save_bio">Save Bio</string>
+    <string name="edit_bio">Edit Bio</string>
 </resources>

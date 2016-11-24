@@ -88,7 +88,6 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
         Toolbar toolbar = (Toolbar)findViewById(R.id.mToolbar);
         setSupportActionBar(toolbar);
 
-
         mStorage = FirebaseStorage.getInstance().getReference();
 
         imageButton = (ImageButton) findViewById(R.id.photo_name);
@@ -125,8 +124,7 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
+                    public void onCancelled(DatabaseError databaseError) {}
                 });
             } else {
                 ownProfile = true;
@@ -147,7 +145,7 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
         drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
 
         viewPager = (ViewPager)findViewById(R.id.tab_viewpager);
-        if (viewPager != null){
+        if (viewPager != null) {
             setupViewPager(viewPager);
         }
 
@@ -358,14 +356,12 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
     }
     private void showUploadProfileDialog() {
         LayoutInflater layoutInflater = LayoutInflater.from(this);
-        View inflater = layoutInflater.inflate(R.layout.dialog_upload_profile, null);
+        View inflater = layoutInflater.inflate(R.layout.dialog_upload_photo, null);
         imageButton = (ImageButton) inflater.findViewById(R.id.photo_name);
         final Dialog dialog = new Dialog(this);
 
-
-        dialog.setTitle("Upload Photo");
+        dialog.setTitle(R.string.upload_photo);
         dialog.setContentView(inflater);
-
 
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -374,10 +370,7 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
                 // Create intent to Open Image applications like Gallery, Google Photos
                 Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                // Start the Intent
                 startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
-
-
             }
 
         });
@@ -389,22 +382,19 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
         super.onActivityResult(requestCode,resultCode,data);
         if(requestCode == RESULT_LOAD_IMG && resultCode == RESULT_OK){
             LayoutInflater layoutInflater = LayoutInflater.from(getApplicationContext());
-            View inflater = layoutInflater.inflate(R.layout.dialog_upload_profile, null);
+            View inflater = layoutInflater.inflate(R.layout.dialog_upload_photo, null);
             imageButton = (ImageButton) inflater.findViewById(R.id.photo_name);
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             PhotoURI = data.getData();
-            Log.v("this", "PhotoURI:" + PhotoURI.toString());
+            Log.v(TAG, "PhotoURI:" + PhotoURI.toString());
             imageButton.setImageURI(PhotoURI);
 
-            alert.setTitle("Upload Photo");
+            alert.setTitle(R.string.upload_photo);
             alert.setIcon(R.drawable.ic_mode_edit_black);
             alert.setView(inflater);
 
-
-
             alert.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton)
-                {
+                public void onClick(DialogInterface dialog, int whichButton) {
                     progressDialog.setMessage("Uploading...");
                     progressDialog.show();
                     StorageReference filepath = mStorage.child("Photos").child(PhotoURI.getLastPathSegment());
@@ -412,14 +402,12 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
                     filepath.putFile(PhotoURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
                             Uri downloadUrl = taskSnapshot.getDownloadUrl();
 
                             DatabaseReference newPage = mDatabase.push();
                             newPage.child("Photos").setValue(downloadUrl.toString());
 
                             progressDialog.dismiss();
-
                         }
                     });
 

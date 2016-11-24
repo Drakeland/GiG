@@ -44,7 +44,7 @@ public class PhotosTabFragment extends Fragment {
         // Get a reference to the todoItems child items it the database
         mDatabase = FirebaseDatabase.getInstance().getReference("photos").child(mUser.username);
         //FirebaseDatabase.getInstance().getReference().child("profile_page");
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(recyclerView.getContext(),2));
         recyclerView.setHasFixedSize(true);
 

@@ -37,7 +37,7 @@ public class AboutTabFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         rootView = inflater.inflate(R.layout.fragment_about, container, false);
-        recyclerView = (RecyclerView)rootView.findViewById(R.id.recyclerView);
+        recyclerView = (RecyclerView)rootView.findViewById(R.id.recycler_view);
         setupRecyclerView(recyclerView);
 
         mUser = new User(getArguments());
@@ -90,20 +90,16 @@ public class AboutTabFragment extends Fragment {
             }
         });
 
-        editText = (EditText)rootView.findViewById(R.id.edit_text);
-        //textView = (TextView)rootView.findViewById(R.id.text_view);
+        editText = (EditText) rootView.findViewById(R.id.edit_about_text);
 
         OnFocusChangeListener ofcListener = new AboutTabFragment.MyFocusChangeListener();
         editText.setOnFocusChangeListener(ofcListener);
 
-
-
-        final Button saveButton = (Button)rootView.findViewById(R.id.saveButton);
-        final Button editButton = (Button)rootView.findViewById(R.id.editButton);
+        final Button saveButton = (Button)rootView.findViewById(R.id.save_button);
+        final Button editButton = (Button)rootView.findViewById(R.id.edit_button);
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
                 // Create a new child with a auto-generated ID.
                 aboutRef.getRef().removeValue();
                 DatabaseReference childRef = aboutRef.push();
@@ -113,8 +109,6 @@ public class AboutTabFragment extends Fragment {
 
                 String result = editText.getText().toString();
                 editText.setEnabled(false);
-
-
             }
         });
         editButton.setOnClickListener(new View.OnClickListener() {
@@ -122,8 +116,6 @@ public class AboutTabFragment extends Fragment {
                 editText.setEnabled(true);
             }
         });
-
-
     }
 
     private void setupRecyclerView(RecyclerView recyclerView){
@@ -183,7 +175,7 @@ public class AboutTabFragment extends Fragment {
 
         public void onFocusChange(View v, boolean hasFocus){
 
-            if(v.getId() == R.id.edit_text && !hasFocus) {
+            if(v.getId() == R.id.edit_about_text && !hasFocus) {
                 //sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
                 InputMethodManager imm =  (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);

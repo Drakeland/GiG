@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
@@ -15,25 +15,24 @@
         android:orientation="vertical"
         android:layout_gravity="bottom">
         <Button
-            android:id="@+id/saveButton"
+            android:id="@+id/save_button"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Save Bio"/>
+            android:text="@string/save_bio"/>
         <Button
-            android:id="@+id/editButton"
+            android:id="@+id/edit_button"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/saveButton"
-            android:text="Edit Bio"/>
+            android:layout_below="@+id/save_button"
+            android:text="@string/edit_bio"/>
         <EditText
-            android:id="@+id/edit_text"
+            android:id="@+id/edit_about_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:imeOptions="actionDone"
             android:inputType="textMultiLine"
             android:textColor="@color/black"
-            android:layout_below="@+id/editButton"
-            />
+            android:layout_below="@+id/edit_button"/>
     </LinearLayout>
 </RelativeLayout>
 

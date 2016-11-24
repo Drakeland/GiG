@@ -38,7 +38,7 @@ public class GenreTabFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 
         rootView = inflater.inflate(R.layout.fragment_genres, container, false);
-        recyclerView = (RecyclerView)rootView.findViewById(R.id.recyclerView);
+        recyclerView = (RecyclerView)rootView.findViewById(R.id.recycler_view);
         setupRecyclerView(recyclerView);
 
         mUser = new User(getArguments());
@@ -51,7 +51,7 @@ public class GenreTabFragment extends ListFragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Get ListView object from xml
-        final ListView listView = (ListView)rootView.findViewById(android.R.id.list);
+        final ListView listView = (ListView)rootView.findViewById(R.id.list_genres);
 
         // Create a new Adapter
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
@@ -108,7 +108,7 @@ public class GenreTabFragment extends ListFragment {
                 }
             }
         });
-        final Button button = (Button)rootView.findViewById(R.id.addButton);
+        final Button button = (Button)rootView.findViewById(R.id.add_button);
 
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
