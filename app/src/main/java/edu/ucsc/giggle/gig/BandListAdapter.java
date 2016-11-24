@@ -24,6 +24,7 @@ import edu.ucsc.giggle.gig.User;
  */
 public class BandListAdapter extends BaseAdapter {
 
+    final private String TAG = "BandListAdapter";
     private Query mRef;
     private Class<User> mModelClass;
     private int mLayout;
@@ -119,7 +120,7 @@ public class BandListAdapter extends BaseAdapter {
 
             @Override
             public void onCancelled(DatabaseError firebaseError) {
-                Log.e("FirebaseListAdapter", "Listen was cancelled, no more updates will occur");
+                Log.e(TAG, "Listen was cancelled, no more updates will occur");
             }
 
         });

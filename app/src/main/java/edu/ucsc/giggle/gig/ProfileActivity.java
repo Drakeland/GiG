@@ -70,8 +70,7 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
         Toolbar toolbar = (Toolbar)findViewById(R.id.mToolbar);
         setSupportActionBar(toolbar);
 
-        pUser = new User(getIntent().getStringExtra("username"),
-                         getIntent().getStringExtra("bandname"));
+        pUser = new User(getIntent().getExtras());
 
         // Initialize Firebase Auth
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -86,34 +85,35 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
         } else {
             String mEmail = mFirebaseUser.getEmail();
             mUser.setUsernameFromEmail(mEmail);
-            if (mUser.username == pUser.username) ownProfile = true;
-
-            User.usersTable().child(mUser.username).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    if (snapshot.getValue() != null) {
-                        // user exists, retrieve from DB snapshot
-                        mUser = snapshot.getValue(User.class);
-                    } else {
-                        // user does not exist, use default bandname from Google Sign-in and add to DB
-                        mUser.bandname = mFirebaseUser.getDisplayName();
-                        mUser.photoUrl = mFirebaseUser.getPhotoUrl().toString();
-                        mUser.update();
+            if (!mUser.username.equals(pUser.username)) {
+                User.usersTable().child(mUser.username).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        if (snapshot.getValue() != null) {
+                            // user exists, retrieve from DB snapshot
+                            mUser = snapshot.getValue(User.class);
+                        } else {
+                            // user does not exist, use default bandname from Google Sign-in and add to DB
+                            mUser.bandname = mFirebaseUser.getDisplayName();
+                            mUser.photoUrl = mFirebaseUser.getPhotoUrl().toString();
+                            mUser.update();
+                        }
                     }
-                }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {}
-            });
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+            } else {
+                ownProfile = true;
+                mUser.bandname = pUser.bandname;
+
+            }
         }
 
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(pUser.bandname);
-        if (pUser.bandname != null)
-            Log.d(TAG, "***********************************************************************");
-        else
-            Log.d(TAG, "#######################################################################");
 
         ImageView profile_pic = (ImageView) findViewById(R.id.profile_pic);
         Glide.with(this).load(pUser.photoUrl).into(profile_pic);
@@ -161,17 +161,17 @@ public class ProfileActivity extends AppCompatActivity implements GoogleApiClien
     private void setupViewPager(ViewPager viewPager){
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-        Bundle bundle = new Bundle();
-        bundle.putString("username", mUser.username);
-        bundle.putString("bandname", mUser.bandname);
-
         AboutTabFragment   aboutTabFragment = new  AboutTabFragment();
         GenreTabFragment   genreTabFragment = new  GenreTabFragment();
         MusicTabFragment   musicTabFragment = new  MusicTabFragment();
         GigsTabFragment     gigsTabFragment = new   GigsTabFragment();
         PhotosTabFragment photosTabFragment = new PhotosTabFragment();
 
-        gigsTabFragment.setArguments(bundle);
+        aboutTabFragment .setArguments(pUser.bundle());
+        genreTabFragment .setArguments(pUser.bundle());
+        musicTabFragment .setArguments(pUser.bundle());
+        gigsTabFragment  .setArguments(pUser.bundle());
+        photosTabFragment.setArguments(pUser.bundle());
 
         adapter.addFrag( aboutTabFragment, getString(R.string.about_label));
         adapter.addFrag( genreTabFragment, getString(R.string.genres_label));

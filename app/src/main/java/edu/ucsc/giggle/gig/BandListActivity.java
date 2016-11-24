@@ -118,8 +118,7 @@ public class BandListActivity extends AppCompatActivity implements GoogleApiClie
                             DataSnapshot firstChild = dataSnapshot.getChildren().iterator().next();
                             User user = (User) firstChild.getValue(User.class);
                             Intent intent = new Intent(BandListActivity.this, ProfileActivity.class);
-                            intent.putExtra("username", user.username);
-                            intent.putExtra("bandname", user.bandname);
+                            intent.putExtras(user.bundle());
                             startActivity(intent);
                         }
                     }
@@ -145,12 +144,17 @@ public class BandListActivity extends AppCompatActivity implements GoogleApiClie
         // as you specify a parent activity in AndroidManifest.xml.
 
         switch(item.getItemId()) {
+            case R.id.my_profile_menu:
+                Intent intent = new Intent(BandListActivity.this, ProfileActivity.class);
+                intent.putExtras(mUser.bundle());
+                startActivity(intent);
+                return true;
+
             case R.id.sign_out_menu:
                 mFirebaseAuth.signOut();
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                 mUser = null;
                 startActivity(new Intent(this, SignInActivity.class));
-
                 return true;
 
             default:
