@@ -1,10 +1,13 @@
 package edu.ucsc.giggle.gig;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -37,22 +40,29 @@ import java.util.concurrent.ExecutionException;
 import android.support.design.widget.CoordinatorLayout;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.Target;
+import com.google.android.gms.ads.formats.NativeAd;
 import com.google.android.gms.appinvite.AppInvite;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 public class ProfileActivity extends AppCompatActivity
         implements GoogleApiClient.OnConnectionFailedListener {
@@ -64,8 +74,14 @@ public class ProfileActivity extends AppCompatActivity
     private DrawerLayout drawerLayout;
     private String mUsername;
     private String mPhotoUrl;
+    private Uri PhotoURI;
+    private ProgressDialog progressDialog;
+    private ImageButton imageButton;
     private GoogleApiClient mGoogleApiClient;
+    private DatabaseReference mDatabase;
+    private StorageReference mStorage;
 
+    private static final int RESULT_LOAD_IMG = 1;
     // Firebase instance variables
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
@@ -80,6 +96,13 @@ public class ProfileActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar)findViewById(R.id.mToolbar);
         setSupportActionBar(toolbar);
 
+        Log.v("this", "This dick");
+        mStorage = FirebaseStorage.getInstance().getReference();
+       //mDatabase = FirebaseDatabase.getInstance().getReference("photos").child(mUser.username);
+        // mDatabase = FirebaseDatabase.getInstance().getReference().child("profile_page");
+
+        imageButton = (ImageButton) findViewById(R.id.photo_name);
+        progressDialog = new ProgressDialog(this);
         // Initialize Firebase Auth
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
@@ -115,6 +138,7 @@ public class ProfileActivity extends AppCompatActivity
             });
         }
 
+        mDatabase = FirebaseDatabase.getInstance().getReference("photos").child(mUser.username);
 
 
         // Initialize Google API
@@ -175,17 +199,19 @@ public class ProfileActivity extends AppCompatActivity
 
         AboutTabFragment  aboutTabFragment  = new  AboutTabFragment();
         GenreTabFragment  genreTabFragment  = new  GenreTabFragment();
-        MusicTabFragment  musicTabFragment  = new  MusicTabFragment();
+        MusicFragment  musicFragment  = new  MusicFragment();
         GigsTabFragment   gigsTabFragment   = new   GigsTabFragment();
         PhotoFragment photoFragment = new PhotoFragment();
 
         aboutTabFragment.setArguments(bundle);
+        photoFragment.setArguments(bundle);
         genreTabFragment.setArguments(bundle);
         gigsTabFragment.setArguments(bundle);
+        musicFragment.setArguments(bundle);
 
         adapter.addFrag( aboutTabFragment, getString(R.string.about_label));
         adapter.addFrag( genreTabFragment, getString(R.string.genres_label));
-        adapter.addFrag( musicTabFragment, getString(R.string.music_label));
+        adapter.addFrag( musicFragment, getString(R.string.music_label));
         adapter.addFrag(  gigsTabFragment, getString(R.string.gigs_label));
         adapter.addFrag(photoFragment, getString(R.string.photos_label));
         viewPager.setAdapter(adapter);
@@ -286,6 +312,12 @@ public class ProfileActivity extends AppCompatActivity
                 intent.putExtra("username", mUser.username);
                 intent.putExtra("bandname", mUser.bandname);
                 startActivity(intent);
+                Log.v("this", "This dick");
+ //               startActivity(new Intent(ProfileActivity.this,MusicUploadActivity.class));
+                return true;
+
+            case R.id.upload_photo_menu:
+                showUploadProfileDialog();
                 return true;
 
             case android.R.id.home:
@@ -340,6 +372,87 @@ public class ProfileActivity extends AppCompatActivity
         });
 
         alert.show();
+    }
+    private void showUploadProfileDialog() {
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        View inflater = layoutInflater.inflate(R.layout.dialog_upload_profile, null);
+        imageButton = (ImageButton) inflater.findViewById(R.id.photo_name);
+        final Dialog dialog = new Dialog(this);
+
+
+        dialog.setTitle("Upload Photo");
+        dialog.setContentView(inflater);
+
+
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                // Create intent to Open Image applications like Gallery, Google Photos
+                Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                // Start the Intent
+                startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
+
+
+            }
+
+        });
+        dialog.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode,resultCode,data);
+        if(requestCode == RESULT_LOAD_IMG && resultCode == RESULT_OK){
+            LayoutInflater layoutInflater = LayoutInflater.from(getApplicationContext());
+            View inflater = layoutInflater.inflate(R.layout.dialog_upload_profile, null);
+            imageButton = (ImageButton) inflater.findViewById(R.id.photo_name);
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            PhotoURI = data.getData();
+            Log.v("this", "PhotoURI:" + PhotoURI.toString());
+            imageButton.setImageURI(PhotoURI);
+
+            alert.setTitle("Upload Photo");
+            alert.setIcon(R.drawable.ic_mode_edit_black);
+            alert.setView(inflater);
+
+
+
+            alert.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton)
+                {
+                    progressDialog.setMessage("Uploading...");
+                    progressDialog.show();
+                    StorageReference filepath = mStorage.child("Photos").child(PhotoURI.getLastPathSegment());
+
+                    filepath.putFile(PhotoURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
+
+                            DatabaseReference newPage = mDatabase.push();
+                            newPage.child("Photos").setValue(downloadUrl.toString());
+
+                            progressDialog.dismiss();
+
+                        }
+                    });
+
+                    dialog.dismiss();
+                }
+            });
+
+            alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    dialog.cancel();
+                }
+            });
+
+            alert.show();
+
+        }
     }
 
 }

@@ -42,7 +42,7 @@ class Mp3Filter implements FilenameFilter{
 
 public class MusicUploadActivity extends ListActivity {
 
-    private String SD_PATH = Environment.getExternalStorageDirectory().getPath();
+    private String SD_PATH = Environment.getExternalStorageDirectory() + "/Music/";
     private List<String> songs = new ArrayList<String>();
     private TextView musicFile;
     private Button submitBtn;
@@ -74,14 +74,15 @@ public class MusicUploadActivity extends ListActivity {
         updatePlaylist();
 
         songListFile = findSongs(new File(SD_PATH));
+        Log.v("this", "PATH: " + SD_PATH);
+
 
         lv = (ListView) findViewById(android.R.id.list);
         mProgress = new ProgressDialog(this);
 
-       // Bundle bundle = getArguments();
         Intent intent = getIntent();
         mUser = new User(intent.getStringExtra("username"),
-               intent.getStringExtra("bandname"));
+                intent.getStringExtra("bandname"));
 
         mStorage = FirebaseStorage.getInstance().getReference();
         mDatabase = FirebaseDatabase.getInstance().getReference("Music").child(mUser.username);
@@ -154,7 +155,7 @@ public class MusicUploadActivity extends ListActivity {
 
     private void updatePlaylist() {
         File home = new File(SD_PATH);
-        Log.v("this","SD_PATH:" + SD_PATH);
+        Log.v("this","SD_PATH:" + home.toString());
         if(home.listFiles(new Mp3Filter()).length > 0){
             for(File file : home.listFiles(new Mp3Filter())){
                 songs.add(file.getName());
